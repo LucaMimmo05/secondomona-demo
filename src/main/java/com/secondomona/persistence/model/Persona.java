@@ -515,8 +515,8 @@ public class Persona {
         this.centroCosto = centroCosto;
     }
 
-    public Ruolo getRuolo() {
-        return ruolo;
+    public String getRuolo() {
+        return ruolo.toString();
     }
 
     public void setRuolo(Ruolo ruolo) {
