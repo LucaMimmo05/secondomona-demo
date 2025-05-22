@@ -1,6 +1,5 @@
 package com.secondomona.persistence.model;
 
-import com.secondomona.persistence.model.roles.Ruolo;
 import io.quarkus.security.jpa.Password;
 import io.quarkus.security.jpa.Roles;
 import io.quarkus.security.jpa.UserDefinition;
@@ -140,9 +139,8 @@ public class Persona {
     private CentroCosto centroCosto;
 
     @Roles
-    @Enumerated(EnumType.STRING)
     @Column(name = "Ruolo", nullable = false, length = 20)
-    private Ruolo ruolo;
+    private String ruolo;
 
     @Password
     @Column(name = "PasswordHash", nullable = false, length = 255)
@@ -150,8 +148,7 @@ public class Persona {
 
     public Persona() {}
 
-    public Persona(Integer idPersona, String idRuna, String nome, String cognome, String diminutivo, String azienda, String indirizzo, String citta, String provincia, String nazione, String telefono, String cellulare, String fax, String pIva, String cf, String mail, String foto, LocalDate dataAssunzione, String matricola, Integer idFiliale, Integer idMansione, Integer idDeposito, Integer idRiferimento, Boolean visitatore, Integer accessNumber, Integer accessCount, LocalDateTime accessUpdate, String luogoNascita, LocalDate dataNascita, LocalDate dataScadCertificato, Boolean preposto, Boolean antincendio, Boolean primoSoccorso, String tipoDocumento, String numeroDocumento, LocalDate dataScadenzaDocumento, Boolean duvri, Boolean flagPrivacy, LocalDate dataConsegnaPrivacy, CentroCosto centroCosto, Ruolo ruolo, String passwordHash) {
-        this.idPersona = idPersona;
+    public Persona(String idRuna, String nome, String cognome, String diminutivo, String azienda, String indirizzo, String citta, String provincia, String nazione, String telefono, String cellulare, String fax, String pIva, String cf, String mail, String foto, LocalDate dataAssunzione, String matricola, Integer idFiliale, Integer idMansione, Integer idDeposito, Integer idRiferimento, Boolean visitatore, Integer accessNumber, Integer accessCount, LocalDateTime accessUpdate, String luogoNascita, LocalDate dataNascita, LocalDate dataScadCertificato, Boolean preposto, Boolean antincendio, Boolean primoSoccorso, String tipoDocumento, String numeroDocumento, LocalDate dataScadenzaDocumento, Boolean duvri, Boolean flagPrivacy, LocalDate dataConsegnaPrivacy, CentroCosto centroCosto, String ruolo, String passwordHash) {
         this.idRuna = idRuna;
         this.nome = nome;
         this.cognome = cognome;
@@ -516,10 +513,10 @@ public class Persona {
     }
 
     public String getRuolo() {
-        return ruolo.toString();
+        return ruolo;
     }
 
-    public void setRuolo(Ruolo ruolo) {
+    public void setRuolo(String ruolo) {
         this.ruolo = ruolo;
     }
 
