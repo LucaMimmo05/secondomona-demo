@@ -78,6 +78,8 @@ public class PersonaService {
     private PersonaResponse toPersonaResponse(Persona persona) {
         return new PersonaResponse(
                 persona.getIdPersona(),
+                persona.getNome(),
+                persona.getCognome(),
                 persona.getMail(),
                 persona.getRuolo()
         );

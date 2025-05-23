@@ -47,6 +47,8 @@ public class AuthenticationResource {
                 .upn(personaResponse.getEmail())
                 .groups(Set.of(personaResponse.getRole(), "access-token"))
                 .claim(Claims.email.name(), personaResponse.getEmail())
+                .claim("name", personaResponse.getName())
+                .claim("surname", personaResponse.getSurname())
                 .expiresIn(Duration.ofMinutes(15))
                 .issuedAt(Instant.now())
                 .sign();
@@ -59,8 +61,11 @@ public class AuthenticationResource {
                 .upn(personaResponse.getEmail())
                 .groups(Set.of(personaResponse.getRole(), "refresh-token"))
                 .claim(Claims.email.name(), personaResponse.getEmail())
+                .claim("name", personaResponse.getName())
+                .claim("surname", personaResponse.getSurname())
                 .expiresIn(Duration.ofHours(1))
                 .issuedAt(Instant.now())
                 .sign();
     }
+
 }
