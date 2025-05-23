@@ -11,7 +11,7 @@ public class Tessera {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "IdTessera")
-    private Integer id;
+    private Integer idTessera;
 
     @ManyToOne
     @JoinColumn(name = "IdPersona", nullable = false)
@@ -91,12 +91,12 @@ public class Tessera {
         this.tipologiaBadge = tipologiaBadge;
     }
 
-    public Integer getId() {
-        return id;
+    public Integer getIdTessera() {
+        return idTessera;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setIdTessera(Integer idTessera) {
+        this.idTessera = idTessera;
     }
 
     public Persona getPersona() {

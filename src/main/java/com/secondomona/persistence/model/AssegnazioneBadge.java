@@ -11,7 +11,7 @@ public class AssegnazioneBadge {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "IdAssegnazione")
-    private Integer id;
+    private Integer idAssegnazione;
 
     @ManyToOne
     @JoinColumn(name = "IdTessera", nullable = false)
@@ -36,12 +36,12 @@ public class AssegnazioneBadge {
         this.dataFine = dataFine;
     }
 
-    public Integer getId() {
-        return id;
+    public Integer getIdAssegnazione() {
+        return idAssegnazione;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setIdAssegnazione(Integer idAssegnazione) {
+        this.idAssegnazione = idAssegnazione;
     }
 
     public Tessera getTessera() {
