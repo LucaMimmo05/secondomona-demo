@@ -14,18 +14,27 @@ import java.util.List;
 
 
 @Path("/api/visite")
-@RolesAllowed({"refresh-token"})
+@RolesAllowed({"refresh-token", "access-token"})
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 public class VisitaResource {
-    private VisitaService visitaService;
+    private final VisitaService visitaService;
 
     public VisitaResource(VisitaService visitaService) {
         this.visitaService = visitaService;
     }
 
     @GET
+    public List<RichiestaVisitaDTO> listaVisite() {
+        return visitaService.getAllRichiesteVisite();
+    }
+
+    // ! TO Implement
+    /*@Path("/attive")
+    @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public List<RichiestaVisitaDTO> activeVisit() {
-        return visitaService.getAllRichiesteVisite();
-    }
+        return null;
+    }*/
 }
