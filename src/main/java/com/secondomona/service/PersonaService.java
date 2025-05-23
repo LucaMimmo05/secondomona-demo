@@ -75,6 +75,10 @@ public class PersonaService {
         return toPersonaResponse(persona);
     }
 
+    public PersonaResponse getPersonaByEmail(String email) {
+        return toPersonaResponse(personaRepository.findByEmail(email));
+    }
+
     private PersonaResponse toPersonaResponse(Persona persona) {
         return new PersonaResponse(
                 persona.getIdPersona(),
