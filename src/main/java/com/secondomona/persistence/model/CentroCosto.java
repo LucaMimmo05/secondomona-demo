@@ -19,8 +19,7 @@ public class CentroCosto {
 
     public CentroCosto() {}
 
-    public CentroCosto(Integer idCentroCosto, String numeroCentroCosto, String descrizioneCentroCosto) {
-        this.idCentroCosto = idCentroCosto;
+    public CentroCosto(String numeroCentroCosto, String descrizioneCentroCosto) {
         this.numeroCentroCosto = numeroCentroCosto;
         this.descrizioneCentroCosto = descrizioneCentroCosto;
     }
