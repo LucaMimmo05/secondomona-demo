@@ -21,7 +21,7 @@ public class PersonaRepository implements PanacheRepositoryBase<Persona, Long> {
         return null;
     }
 
-    private Persona findByEmail(String email) {
+    public Persona findByEmail(String email) {
         return find(
                 "SELECT p FROM Persona p WHERE " +
                         "p.mail = :mail",
