@@ -1,42 +1,42 @@
 package com.secondomona.dto;
 
 public class PersonaDTO {
-    private String name;
-    private String surname;
-    private String email;
+    private String nome;
+    private String cognome;
+    private String mail;
 
     public PersonaDTO(String nomeVisitatore, String cognomeVisitatore, String emailVisitatore) {
-        this.name = nomeVisitatore;
-        this.surname = cognomeVisitatore;
-        this.email = emailVisitatore;
+        this.nome = nomeVisitatore;
+        this.cognome = cognomeVisitatore;
+        this.mail = emailVisitatore;
     }
 
     public PersonaDTO() {
 
     }
 
-    public String getName() {
-        return name;
+    public String getNome() {
+        return nome;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
-    public String getSurname() {
-        return surname;
+    public String getCognome() {
+        return cognome;
     }
 
-    public void setSurname(String surname) {
-        this.surname = surname;
+    public void setCognome(String cognome) {
+        this.cognome = cognome;
     }
 
-    public String getEmail() {
-        return email;
+    public String getMail() {
+        return mail;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setMail(String mail) {
+        this.mail = mail;
     }
 
 }
