@@ -3,6 +3,8 @@ package com.secondomona.persistence.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "RichiesteVisite")
@@ -22,10 +24,10 @@ public class RichiestaVisita {
     private Persona richiedente;
 
     @Column(name = "DataInizio", nullable = false)
-    private LocalDateTime dataInizio;
+    private OffsetDateTime dataInizio;
 
     @Column(name = "DataFine", nullable = false)
-    private LocalDateTime dataFine;
+    private OffsetDateTime dataFine;
 
     @Column(name = "MotivoVisita")
     private String motivoVisita;
@@ -42,7 +44,7 @@ public class RichiestaVisita {
 
     public RichiestaVisita() {}
 
-    public RichiestaVisita(Persona visitatore, Persona richiedente, LocalDateTime dataInizio, LocalDateTime dataFine, String motivoVisita, Boolean flagAccessoAutomezzo, Boolean flagRichiestaDpi, MaterialeInformatico materialeInformatico) {
+    public RichiestaVisita(Persona visitatore, Persona richiedente, OffsetDateTime dataInizio, OffsetDateTime dataFine, String motivoVisita, Boolean flagAccessoAutomezzo, Boolean flagRichiestaDpi, MaterialeInformatico materialeInformatico) {
         this.visitatore = visitatore;
         this.richiedente = richiedente;
         this.dataInizio = dataInizio;
@@ -77,19 +79,19 @@ public class RichiestaVisita {
         this.richiedente = richiedente;
     }
 
-    public LocalDateTime getDataInizio() {
+    public OffsetDateTime getDataInizio() {
         return dataInizio;
     }
 
-    public void setDataInizio(LocalDateTime dataInizio) {
+    public void setDataInizio(OffsetDateTime     dataInizio) {
         this.dataInizio = dataInizio;
     }
 
-    public LocalDateTime getDataFine() {
+    public OffsetDateTime getDataFine() {
         return dataFine;
     }
 
-    public void setDataFine(LocalDateTime dataFine) {
+    public void setDataFine(OffsetDateTime dataFine) {
         this.dataFine = dataFine;
     }
 

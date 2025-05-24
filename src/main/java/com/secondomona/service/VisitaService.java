@@ -25,6 +25,31 @@ public class VisitaService {
                 .toList();
     }
 
+    public List<RichiestaVisitaDTO> getVisiteAttive() {
+        return visitaRepository.findVisiteAttive().stream()
+                .map(visita -> new RichiestaVisitaDTO(
+                        visita.getIdRichiesta(),
+                        new PersonaDTO(
+                                visita.getVisitatore().getNome(),
+                                visita.getVisitatore().getCognome(),
+                                visita.getVisitatore().getMail()
+                        ),
+                        new PersonaDTO(
+                                visita.getRichiedente().getNome(),
+                                visita.getRichiedente().getCognome(),
+                                visita.getRichiedente().getMail()
+                        ),
+                        visita.getDataInizio(),
+                        visita.getDataFine(),
+                        visita.getMotivoVisita(),
+                        visita.getFlagAccessoAutomezzo(),
+                        visita.getFlagRichiestaDpi(),
+                        visita.getMaterialeInformatico()
+                ))
+                .toList();
+    }
+
+
     public RichiestaVisitaDTO toDTO(RichiestaVisita entity) {
         RichiestaVisitaDTO dto = new RichiestaVisitaDTO();
         dto.setIdRichiesta(entity.getIdRichiesta());
@@ -34,15 +59,15 @@ public class VisitaService {
 
         // Mappa solo i dati che vuoi di Persona
         PersonaDTO visitatoreDto = new PersonaDTO();
-        visitatoreDto.setName(entity.getVisitatore().getNome());
-        visitatoreDto.setSurname(entity.getVisitatore().getCognome());
-        visitatoreDto.setEmail(entity.getVisitatore().getMail());
+        visitatoreDto.setNome(entity.getVisitatore().getNome());
+        visitatoreDto.setCognome(entity.getVisitatore().getCognome());
+        visitatoreDto.setMail(entity.getVisitatore().getMail());
         dto.setVisitatore(visitatoreDto);
 
         PersonaDTO richiedenteDto = new PersonaDTO();
-        richiedenteDto.setName(entity.getRichiedente().getNome());
-        richiedenteDto.setSurname(entity.getRichiedente().getCognome());
-        richiedenteDto.setEmail(entity.getRichiedente().getMail());
+        richiedenteDto.setNome(entity.getRichiedente().getNome());
+        richiedenteDto.setCognome(entity.getRichiedente().getCognome());
+        richiedenteDto.setMail(entity.getRichiedente().getMail());
         dto.setRichiedente(richiedenteDto);
 
         return dto;

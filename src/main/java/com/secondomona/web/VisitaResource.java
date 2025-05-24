@@ -29,12 +29,12 @@ public class VisitaResource {
         return visitaService.getAllRichiesteVisite();
     }
 
-    // ! TO Implement
-    /*@Path("/attive")
+
+    @Path("/attive")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public List<RichiestaVisitaDTO> activeVisit() {
-        return null;
-    }*/
+        return visitaService.getVisiteAttive();
+    }
 }

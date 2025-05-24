@@ -3,27 +3,32 @@ package com.secondomona.dto;
 import com.secondomona.persistence.model.MaterialeInformatico;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 
 public class RichiestaVisitaDTO {
     private Integer idRichiesta;
     private PersonaDTO visitatore;
     private PersonaDTO richiedente;
-    private LocalDateTime dataInizio;
-    private LocalDateTime dataFine;
+    private OffsetDateTime dataInizio;
+    private OffsetDateTime dataFine;
     private String motivoVisita;
     private boolean flagAccessoAutomezzo;
     private boolean flagRichiestaDPI;
     private MaterialeInformatico materialeInformatico;
 
-    public RichiestaVisitaDTO(Integer idRichiesta, PersonaDTO personeDTO, PersonaDTO dto, LocalDateTime dataInizio, LocalDateTime dataFine, String motivoVisita, Boolean flagAccessoAutomezzo, Boolean flagRichiestaDpi) {
+    public RichiestaVisitaDTO(Integer idRichiesta, PersonaDTO visitatore, PersonaDTO richiedente, OffsetDateTime dataInizio, OffsetDateTime dataFine, String motivoVisita, Boolean flagAccessoAutomezzo, Boolean flagRichiestaDpi, MaterialeInformatico materialeInformatico) {
         this.idRichiesta = idRichiesta;
-        this.visitatore = personeDTO;
+        this.visitatore = visitatore;
+        this.richiedente = richiedente;
         this.dataInizio = dataInizio;
         this.dataFine = dataFine;
         this.motivoVisita = motivoVisita;
         this.flagAccessoAutomezzo = flagAccessoAutomezzo;
         this.flagRichiestaDPI = flagRichiestaDpi;
+        this.materialeInformatico = materialeInformatico;
     }
+
 
     public RichiestaVisitaDTO() {
 
@@ -53,19 +58,19 @@ public class RichiestaVisitaDTO {
         this.richiedente = richiedente;
     }
 
-    public LocalDateTime getDataInizio() {
+    public OffsetDateTime getDataInizio() {
         return dataInizio;
     }
 
-    public void setDataInizio(LocalDateTime dataInizio) {
+    public void setDataInizio(OffsetDateTime dataInizio) {
         this.dataInizio = dataInizio;
     }
 
-    public LocalDateTime getDataFine() {
+    public OffsetDateTime getDataFine() {
         return dataFine;
     }
 
-    public void setDataFine(LocalDateTime dataFine) {
+    public void setDataFine(OffsetDateTime dataFine) {
         this.dataFine = dataFine;
     }
 
