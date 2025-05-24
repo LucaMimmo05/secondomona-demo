@@ -6,6 +6,8 @@ import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import io.quarkus.panache.common.Parameters;
 import jakarta.enterprise.context.ApplicationScoped;
 
+import java.util.List;
+
 @ApplicationScoped
 public class PersonaRepository implements PanacheRepositoryBase<Persona, Long> {
 
@@ -20,6 +22,8 @@ public class PersonaRepository implements PanacheRepositoryBase<Persona, Long> {
         }
         return null;
     }
+
+
 
     public Persona findByEmail(String email) {
         return find(

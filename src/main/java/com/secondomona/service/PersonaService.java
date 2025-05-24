@@ -2,11 +2,14 @@ package com.secondomona.service;
 
 import com.secondomona.persistence.PersonaRepository;
 import com.secondomona.persistence.model.Persona;
+import com.secondomona.web.PersonaResource;
 import com.secondomona.web.model.PersonaRequest;
 import com.secondomona.web.model.PersonaResponse;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
+
+import java.util.List;
 
 @ApplicationScoped
 public class PersonaService {
@@ -23,6 +26,11 @@ public class PersonaService {
             return null;
         }
         return toPersonaResponse(persona);
+    }
+
+    public List<Persona> getAllPersonas() {
+
+        return personaRepository.findAll().list();
     }
 
     @Transactional
