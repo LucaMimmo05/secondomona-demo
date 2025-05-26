@@ -27,7 +27,7 @@ public class PersonaService {
         return toPersonaResponse(persona);
     }
 
-    public List<Persona> getAllPersonas() {
+    public List<Persona> getAllPersona() {
 
         return personaRepository.findAll().list();
     }
@@ -94,5 +94,11 @@ public class PersonaService {
                 persona.getMail(),
                 persona.getRuolo()
         );
+    }
+
+
+
+    public List<Persona> getVisitatori() {
+        return personaRepository.getVisitatori();
     }
 }

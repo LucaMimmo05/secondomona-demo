@@ -11,7 +11,7 @@ import jakarta.ws.rs.core.MediaType;
 
 import java.util.List;
 
-@Path("/person")
+@Path("api/persone")
 @DenyAll
 public class PersonaResource {
 
@@ -21,7 +21,6 @@ public class PersonaResource {
         this.personaService = personaService;
     }
 
-    @Path("/register")
     @POST
     @RolesAllowed("Admin")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -33,6 +32,6 @@ public class PersonaResource {
     @GET
     @RolesAllowed({"Portineria", "Admin"})
     public List<Persona> getAllPersona() {
-        return personaService.getAllPersonas();
+        return personaService.getAllPersona();
     }
 }
