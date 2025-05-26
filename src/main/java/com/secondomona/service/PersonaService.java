@@ -29,13 +29,13 @@ public class PersonaService {
         return toPersonaResponse(persona);
     }
 
-    public List<Persona> getAllPersona() {
+    public List<Persona> getAllDipendenti() {
 
-        return personaRepository.findAll().list();
+        return personaRepository.getDipendenti();
     }
 
     @Transactional
-    public PersonaResponse createPersona(PersonaRequest personaRequest) {
+    public PersonaResponse createDipendenti(PersonaRequest personaRequest) {
         String passwordHash = BcryptUtil.bcryptHash(personaRequest.getPassword());
         Persona persona = new Persona(
                 personaRequest.getIdRuna(),
@@ -99,7 +99,9 @@ public class PersonaService {
     }
 
 
-
+    public List<Persona> getDipendenti() {
+        return personaRepository.getDipendenti();
+    }
 
     public List<Persona> getVisitatori() {
         return personaRepository.getVisitatori();

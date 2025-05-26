@@ -37,6 +37,13 @@ public class PersonaRepository implements PanacheRepositoryBase<Persona, Long> {
         ).firstResult();
     }
 
+    public List<Persona> getDipendenti() {
+        return getEntityManager()
+                .createQuery("SELECT r FROM Persona r WHERE r.visitatore = :isDipendente", Persona.class)
+                .setParameter("isDipendente", false)
+                .getResultList();
+    }
+
     public List<Persona> getVisitatori() {
         return getEntityManager()
                 .createQuery("SELECT r FROM Persona r WHERE r.visitatore = :isVisitatore", Persona.class)
