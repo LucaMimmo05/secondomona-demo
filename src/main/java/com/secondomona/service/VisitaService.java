@@ -73,5 +73,9 @@ public class VisitaService {
         return dto;
     }
 
+    public RichiestaVisita createRichiestaVisita(RichiestaVisita entity) {
+        return visitaRepository.createVisita(entity);
+    }
+
 
 }
