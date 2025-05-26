@@ -36,6 +36,7 @@ public class PersonaResource {
         return personaService.getAllDipendenti();
     }
     @Path("/visitatori")
+    @RolesAllowed({"access-token"})
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)

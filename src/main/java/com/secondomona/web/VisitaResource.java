@@ -1,12 +1,12 @@
 package com.secondomona.web;
 
+import com.secondomona.dto.PersonaDTO;
 import com.secondomona.dto.RichiestaVisitaDTO;
+import com.secondomona.persistence.model.Persona;
+import com.secondomona.persistence.model.RichiestaVisita;
 import com.secondomona.service.VisitaService;
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 
 import java.util.List;
@@ -28,6 +28,10 @@ public class VisitaResource {
         return visitaService.getAllRichiesteVisite();
     }
 
+    @POST
+    public RichiestaVisita create(RichiestaVisita visita) {
+        return visitaService.createRichiestaVisita(visita);
+    }
 
     @Path("/attive")
     @GET
