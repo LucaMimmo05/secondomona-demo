@@ -87,7 +87,7 @@ public class Persona {
     private Integer idRiferimento;
 
     @Column(name = "Visitatore", nullable = false)
-    private Boolean visitatore = false;
+    private Boolean visitatore;
 
     @Column(name = "AccessNumber", nullable = false)
     private Integer accessNumber = 0;

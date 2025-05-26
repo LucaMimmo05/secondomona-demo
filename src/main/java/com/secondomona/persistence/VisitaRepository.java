@@ -34,4 +34,6 @@ public class VisitaRepository implements PanacheRepositoryBase<RichiestaVisita, 
 
 
 
+
+
 }

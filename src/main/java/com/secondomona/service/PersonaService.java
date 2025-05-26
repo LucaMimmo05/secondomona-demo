@@ -2,7 +2,6 @@ package com.secondomona.service;
 
 import com.secondomona.persistence.PersonaRepository;
 import com.secondomona.persistence.model.Persona;
-import com.secondomona.web.PersonaResource;
 import com.secondomona.web.model.PersonaRequest;
 import com.secondomona.web.model.PersonaResponse;
 import io.quarkus.elytron.security.common.BcryptUtil;
@@ -28,7 +27,7 @@ public class PersonaService {
         return toPersonaResponse(persona);
     }
 
-    public List<Persona> getAllPersonas() {
+    public List<Persona> getAllPersona() {
 
         return personaRepository.findAll().list();
     }
@@ -95,5 +94,11 @@ public class PersonaService {
                 persona.getMail(),
                 persona.getRuolo()
         );
+    }
+
+
+
+    public List<Persona> getVisitatori() {
+        return personaRepository.getVisitatori();
     }
 }
