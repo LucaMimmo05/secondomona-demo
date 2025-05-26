@@ -30,7 +30,7 @@ public class PersonaResource {
     }
 
     @GET
-    @RolesAllowed({"Portineria","Admin"})
+    @RolesAllowed({"Portineria", "Admin"})
     public List<Persona> getAllPersona() {
         return personaService.getAllPersona();
     }
