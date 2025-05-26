@@ -1,10 +1,12 @@
 package com.secondomona.persistence;
 
 import com.secondomona.persistence.model.Persona;
+import com.secondomona.web.model.VisitatoreRequest;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import io.quarkus.panache.common.Parameters;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 
@@ -35,10 +37,27 @@ public class PersonaRepository implements PanacheRepositoryBase<Persona, Long> {
         ).firstResult();
     }
 
+    public List<Persona> getDipendenti() {
+        return getEntityManager()
+                .createQuery("SELECT r FROM Persona r WHERE r.visitatore = :isDipendente", Persona.class)
+                .setParameter("isDipendente", false)
+                .getResultList();
+    }
+
     public List<Persona> getVisitatori() {
         return getEntityManager()
                 .createQuery("SELECT r FROM Persona r WHERE r.visitatore = :isVisitatore", Persona.class)
                 .setParameter("isVisitatore", true)
                 .getResultList();
     }
+    @Transactional
+    public Persona save(Persona persona) {
+        if (persona.getIdPersona() == null) {
+            getEntityManager().persist(persona);
+            return persona;
+        } else {
+            return getEntityManager().merge(persona);
+        }
+    }
+
 }

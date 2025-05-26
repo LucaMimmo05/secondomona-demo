@@ -1,154 +1,55 @@
-package com.secondomona.persistence.model;
+package com.secondomona.web.model;
 
-import io.quarkus.security.jpa.Password;
-import io.quarkus.security.jpa.Roles;
-import io.quarkus.security.jpa.UserDefinition;
-import io.quarkus.security.jpa.Username;
-import jakarta.persistence.*;
+import com.secondomona.persistence.model.CentroCosto;
+import com.secondomona.persistence.model.roles.Ruolo;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "Persone")
-@UserDefinition
-public class Persona {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "IdPersona")
-    private Integer idPersona;
-
-    @Column(name = "IdRuna", length = 50)
+public class VisitatoreRequest {
     private String idRuna;
-
-    @Column(name = "Nome", nullable = false, length = 100)
     private String nome;
-
-    @Column(name = "Cognome", nullable = false, length = 100)
     private String cognome;
-
-    @Column(name = "Diminutivo", length = 50)
     private String diminutivo;
-
-    @Column(name = "Azienda", length = 200)
     private String azienda;
-
-    @Column(name = "Indirizzo", length = 200)
     private String indirizzo;
-
-    @Column(name = "Citta", length = 100)
     private String citta;
-
-    @Column(name = "Provincia", length = 50)
     private String provincia;
-
-    @Column(name = "Nazione", length = 100)
     private String nazione;
-
-    @Column(name = "Telefono", length = 50)
     private String telefono;
-
-    @Column(name = "Cellulare", length = 50)
     private String cellulare;
-
-    @Column(name = "Fax", length = 50)
     private String fax;
-
-    @Column(name = "pIva", length = 20)
     private String pIva;
-
-    @Column(name = "CF", nullable = false, length = 16, unique = true)
     private String cf;
-
-    @Username
-    @Column(name = "Mail", nullable = false, length = 200, unique = true)
     private String mail;
-
-    @Column(name = "Foto", length = 500)
     private String foto;
-
-    @Column(name = "DataAssunzione")
     private LocalDate dataAssunzione;
-
-    @Column(name = "Matricola", length = 50, unique = true)
     private String matricola;
-
-    @Column(name = "IdFiliale")
     private Integer idFiliale;
-
-    @Column(name = "IdMansione")
     private Integer idMansione;
-
-    @Column(name = "IdDeposito")
     private Integer idDeposito;
-
-    @Column(name = "IdRiferimento")
     private Integer idRiferimento;
-
-    @Column(name = "Visitatore", nullable = false)
     private Boolean visitatore;
-
-    @Column(name = "AccessNumber", nullable = false)
-    private Integer accessNumber = 0;
-
-    @Column(name = "AccessCount", nullable = false)
-    private Integer accessCount = 0;
-
-    @Column(name = "AccessUpdate")
-    private LocalDateTime accessUpdate = LocalDateTime.now();
-
-    @Column(name = "LuogoNascita", length = 100)
+    private Integer accessNumber;
+    private Integer accessCount;
+    private LocalDateTime accessUpdate;
     private String luogoNascita;
-
-    @Column(name = "DataNascita")
     private LocalDate dataNascita;
-
-    @Column(name = "DataScadCertificato")
     private LocalDate dataScadCertificato;
-
-    @Column(name = "Preposto", nullable = false)
     private Boolean preposto;
-
-    @Column(name = "Antincendio", nullable = false)
     private Boolean antincendio;
-
-    @Column(name = "PrimoSoccorso", nullable = false)
     private Boolean primoSoccorso;
-
-    @Column(name = "TipoDocumento", length = 50)
     private String tipoDocumento;
-
-    @Column(name = "NumeroDocumento", nullable = false, length = 100, unique = true)
     private String numeroDocumento;
-
-    @Column(name = "DataScadenzaDocumento", nullable = false)
     private LocalDate dataScadenzaDocumento;
-
-    @Column(name = "Duvri", nullable = false)
     private Boolean duvri;
-
-    @Column(name = "FlagPrivacy", nullable = false)
     private Boolean flagPrivacy;
-
-    @Column(name = "DataConsegnaPrivacy")
     private LocalDate dataConsegnaPrivacy;
-
-    @ManyToOne
-    @JoinColumn(name = "IdCentroCosto", nullable = false)
     private CentroCosto centroCosto;
+    private Ruolo ruolo;
+    private String password;
 
-    @Roles
-    @Column(name = "Ruolo", nullable = false, length = 20)
-    private String ruolo;
-
-    @Password
-    @Column(name = "PasswordHash", nullable = false, length = 255)
-    private String passwordHash;
-
-    public Persona() {}
-
-    public Persona(String idRuna, String nome, String cognome, String diminutivo, String azienda, String indirizzo, String citta, String provincia, String nazione, String telefono, String cellulare, String fax, String pIva, String cf, String mail, String foto, LocalDate dataAssunzione, String matricola, Integer idFiliale, Integer idMansione, Integer idDeposito, Integer idRiferimento, Boolean visitatore, Integer accessNumber, Integer accessCount, LocalDateTime accessUpdate, String luogoNascita, LocalDate dataNascita, LocalDate dataScadCertificato, Boolean preposto, Boolean antincendio, Boolean primoSoccorso, String tipoDocumento, String numeroDocumento, LocalDate dataScadenzaDocumento, Boolean duvri, Boolean flagPrivacy, LocalDate dataConsegnaPrivacy, CentroCosto centroCosto, String ruolo, String passwordHash) {
+    public VisitatoreRequest(String idRuna, String nome, String cognome, String diminutivo, String azienda, String indirizzo, String citta, String provincia, String nazione, String telefono, String cellulare, String fax, String pIva, String cf, String mail, String foto, LocalDate dataAssunzione, String matricola, Integer idFiliale, Integer idMansione, Integer idDeposito, Integer idRiferimento, Boolean visitatore, Integer accessNumber, Integer accessCount, LocalDateTime accessUpdate, String luogoNascita, LocalDate dataNascita, LocalDate dataScadCertificato, Boolean preposto, Boolean antincendio, Boolean primoSoccorso, String tipoDocumento, String numeroDocumento, LocalDate dataScadenzaDocumento, Boolean duvri, Boolean flagPrivacy, LocalDate dataConsegnaPrivacy, CentroCosto centroCosto, Ruolo ruolo, String password) {
         this.idRuna = idRuna;
         this.nome = nome;
         this.cognome = cognome;
@@ -171,7 +72,7 @@ public class Persona {
         this.idMansione = idMansione;
         this.idDeposito = idDeposito;
         this.idRiferimento = idRiferimento;
-        this.visitatore = visitatore;
+        this.visitatore = true;
         this.accessNumber = accessNumber;
         this.accessCount = accessCount;
         this.accessUpdate = accessUpdate;
@@ -189,16 +90,9 @@ public class Persona {
         this.dataConsegnaPrivacy = dataConsegnaPrivacy;
         this.centroCosto = centroCosto;
         this.ruolo = ruolo;
-        this.passwordHash = passwordHash;
+        this.password = password;
     }
 
-    public Integer getIdPersona() {
-        return idPersona;
-    }
-
-    public void setIdPersona(Integer idPersona) {
-        this.idPersona = idPersona;
-    }
 
     public String getIdRuna() {
         return idRuna;
@@ -512,19 +406,19 @@ public class Persona {
         this.centroCosto = centroCosto;
     }
 
-    public String getRuolo() {
+    public Ruolo getRuolo() {
         return ruolo;
     }
 
-    public void setRuolo(String ruolo) {
+    public void setRuolo(Ruolo ruolo) {
         this.ruolo = ruolo;
     }
 
-    public String getPasswordHash() {
-        return passwordHash;
+    public String getPassword() {
+        return password;
     }
 
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

@@ -2,8 +2,10 @@ package com.secondomona.service;
 
 import com.secondomona.persistence.PersonaRepository;
 import com.secondomona.persistence.model.Persona;
+import com.secondomona.persistence.model.roles.Ruolo;
 import com.secondomona.web.model.PersonaRequest;
 import com.secondomona.web.model.PersonaResponse;
+import com.secondomona.web.model.VisitatoreRequest;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
@@ -27,13 +29,13 @@ public class PersonaService {
         return toPersonaResponse(persona);
     }
 
-    public List<Persona> getAllPersona() {
+    public List<Persona> getAllDipendenti() {
 
-        return personaRepository.findAll().list();
+        return personaRepository.getDipendenti();
     }
 
     @Transactional
-    public PersonaResponse createPersona(PersonaRequest personaRequest) {
+    public PersonaResponse createDipendenti(PersonaRequest personaRequest) {
         String passwordHash = BcryptUtil.bcryptHash(personaRequest.getPassword());
         Persona persona = new Persona(
                 personaRequest.getIdRuna(),
@@ -58,7 +60,7 @@ public class PersonaService {
                 personaRequest.getIdMansione(),
                 personaRequest.getIdDeposito(),
                 personaRequest.getIdRiferimento(),
-                personaRequest.getVisitatore(),
+                false,
                 personaRequest.getAccessNumber(),
                 personaRequest.getAccessCount(),
                 personaRequest.getAccessUpdate(),
@@ -97,8 +99,59 @@ public class PersonaService {
     }
 
 
+    public List<Persona> getDipendenti() {
+        return personaRepository.getDipendenti();
+    }
 
     public List<Persona> getVisitatori() {
         return personaRepository.getVisitatori();
+    }
+
+    public Persona creaVisitatore(VisitatoreRequest request) {
+        Persona persona = new Persona();
+
+        persona.setIdRuna(request.getIdRuna());
+        persona.setNome(request.getNome());
+        persona.setCognome(request.getCognome());
+        persona.setDiminutivo(request.getDiminutivo());
+        persona.setAzienda(request.getAzienda());
+        persona.setIndirizzo(request.getIndirizzo());
+        persona.setCitta(request.getCitta());
+        persona.setProvincia(request.getProvincia());
+        persona.setNazione(request.getNazione());
+        persona.setTelefono(request.getTelefono());
+        persona.setCellulare(request.getCellulare());
+        persona.setFax(request.getFax());
+        persona.setpIva(request.getpIva());
+        persona.setCf(request.getCf());
+        persona.setMail(request.getMail());
+        persona.setFoto(request.getFoto());
+        persona.setDataAssunzione(request.getDataAssunzione());
+        persona.setMatricola(request.getMatricola());
+        persona.setIdFiliale(request.getIdFiliale());
+        persona.setIdMansione(request.getIdMansione());
+        persona.setIdDeposito(request.getIdDeposito());
+        persona.setIdRiferimento(request.getIdRiferimento());
+
+        // Flag specifici per il visitatore
+        persona.setVisitatore(true);
+        persona.setPreposto(false);
+        persona.setAntincendio(false);
+        persona.setPrimoSoccorso(false);
+
+        // Ruolo come enum
+        persona.setRuolo(Ruolo.Visitatore.name());
+
+        // Altri campi
+        persona.setTipoDocumento(request.getTipoDocumento());
+        persona.setNumeroDocumento(request.getNumeroDocumento());
+        persona.setDataScadenzaDocumento(request.getDataScadenzaDocumento());
+        persona.setDuvri(request.getDuvri());
+        persona.setFlagPrivacy(request.getFlagPrivacy());
+        persona.setDataConsegnaPrivacy(request.getDataConsegnaPrivacy());
+        persona.setCentroCosto(request.getCentroCosto());
+        persona.setPasswordHash(request.getPassword());
+
+        return personaRepository.save(persona);
     }
 }
