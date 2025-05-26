@@ -60,7 +60,7 @@ public class PersonaService {
                 personaRequest.getIdMansione(),
                 personaRequest.getIdDeposito(),
                 personaRequest.getIdRiferimento(),
-                personaRequest.getVisitatore(),
+                false,
                 personaRequest.getAccessNumber(),
                 personaRequest.getAccessCount(),
                 personaRequest.getAccessUpdate(),
