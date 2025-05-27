@@ -1,13 +1,16 @@
 package com.secondomona.service;
 
 import com.secondomona.persistence.PersonaRepository;
+import com.secondomona.persistence.TesseraRepository;
 import com.secondomona.persistence.model.Persona;
+import com.secondomona.persistence.model.Tessera;
 import com.secondomona.persistence.model.roles.Ruolo;
 import com.secondomona.web.model.PersonaRequest;
 import com.secondomona.web.model.PersonaResponse;
 import com.secondomona.web.model.VisitatoreRequest;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
@@ -16,6 +19,9 @@ import java.util.List;
 public class PersonaService {
 
     private final PersonaRepository personaRepository;
+
+    @Inject
+    private TesseraRepository tesseraRepository;
 
     public PersonaService(PersonaRepository personaRepository) {
         this.personaRepository = personaRepository;
@@ -88,16 +94,42 @@ public class PersonaService {
         return toPersonaResponse(personaRepository.findByEmail(email));
     }
 
+    /**
+     * Recupera la tessera attiva associata a una persona
+     * @param persona La persona di cui recuperare la tessera
+     * @return La tessera attiva, o null se non esiste
+     */
+    private Tessera getTesseraAttivaByPersona(Persona persona) {
+        if (persona == null) {
+            return null;
+        }
+
+        // Cerchiamo una tessera attiva per questa persona
+        // Usando find con Panache
+        Tessera tessera = tesseraRepository.find("persona = ?1 AND abilitata = true AND attivata = true AND eliminata = false", persona)
+                .firstResult();
+
+        return tessera;
+    }
+
     private PersonaResponse toPersonaResponse(Persona persona) {
+        if (persona == null) {
+            return null;
+        }
+
+        // Recupera la tessera attiva della persona
+        Tessera tessera = getTesseraAttivaByPersona(persona);
+        Long idTessera = (tessera != null) ? tessera.getIdTessera().longValue() : null;
+
         return new PersonaResponse(
                 persona.getIdPersona(),
                 persona.getNome(),
                 persona.getCognome(),
                 persona.getMail(),
-                persona.getRuolo()
+                persona.getRuolo(),
+                idTessera
         );
     }
-
 
     public List<Persona> getDipendenti() {
         return personaRepository.getDipendenti();

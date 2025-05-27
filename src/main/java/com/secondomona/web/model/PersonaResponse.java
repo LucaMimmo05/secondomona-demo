@@ -7,13 +7,25 @@ public class PersonaResponse {
     private String surname;
     private String email;
     private String role;
+    private Long idTessera; // Nuovo campo per l'ID della tessera
 
-    public PersonaResponse(long id,String name,String surname, String email, String role) {
-        this.name=name;
-        this.surname=surname;
+    public PersonaResponse(long id, String name, String surname, String email, String role, Long idTessera) {
+        this.name = name;
+        this.surname = surname;
         this.id = id;
         this.email = email;
         this.role = role;
+        this.idTessera = idTessera;
+    }
+
+    // Costruttore senza idTessera per retrocompatibilità
+    public PersonaResponse(long id, String name, String surname, String email, String role) {
+        this.name = name;
+        this.surname = surname;
+        this.id = id;
+        this.email = email;
+        this.role = role;
+        this.idTessera = null;
     }
 
     public long getId() {
@@ -54,5 +66,13 @@ public class PersonaResponse {
 
     public void setSurname(String surname) {
         this.surname = surname;
+    }
+
+    public Long getIdTessera() {
+        return idTessera;
+    }
+
+    public void setIdTessera(Long idTessera) {
+        this.idTessera = idTessera;
     }
 }

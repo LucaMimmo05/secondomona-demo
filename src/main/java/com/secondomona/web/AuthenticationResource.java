@@ -41,7 +41,11 @@ public class AuthenticationResource {
         }
         String accessToken = getAccessToken(personaResponse);
         String refreshToken = getRefreshToken(personaResponse);
-        return Response.ok(new TokenResponse(accessToken, refreshToken)).build();
+
+        // Creiamo la risposta includendo l'ID della tessera e l'ID della persona
+        TokenResponse tokenResponse = new TokenResponse(accessToken, refreshToken, personaResponse.getIdTessera(), personaResponse.getId());
+
+        return Response.ok(tokenResponse).build();
     }
 
     @POST
@@ -61,7 +65,7 @@ public class AuthenticationResource {
     }
 
     private String getAccessToken(PersonaResponse personaResponse) {
-        return Jwt
+        var jwtBuilder = Jwt
                 .issuer("secondomona-demo")
                 .subject(String.valueOf(personaResponse.getId()))
                 .upn(personaResponse.getEmail())
@@ -69,13 +73,21 @@ public class AuthenticationResource {
                 .claim(Claims.email.name(), personaResponse.getEmail())
                 .claim("name", personaResponse.getName())
                 .claim("surname", personaResponse.getSurname())
+                .claim("idPersona", personaResponse.getId());
+
+        // Aggiungi idTessera solo se non è null
+        if (personaResponse.getIdTessera() != null) {
+            jwtBuilder.claim("idTessera", personaResponse.getIdTessera());
+        }
+
+        return jwtBuilder
                 .expiresIn(Duration.ofMinutes(15))
                 .issuedAt(Instant.now())
                 .sign();
     }
 
     private String getRefreshToken(PersonaResponse personaResponse) {
-        return Jwt
+        var jwtBuilder = Jwt
                 .issuer("secondomona-demo")
                 .subject(String.valueOf(personaResponse.getId()))
                 .upn(personaResponse.getEmail())
@@ -83,6 +95,14 @@ public class AuthenticationResource {
                 .claim(Claims.email.name(), personaResponse.getEmail())
                 .claim("name", personaResponse.getName())
                 .claim("surname", personaResponse.getSurname())
+                .claim("idPersona", personaResponse.getId());
+
+        // Aggiungi idTessera solo se non è null
+        if (personaResponse.getIdTessera() != null) {
+            jwtBuilder.claim("idTessera", personaResponse.getIdTessera());
+        }
+
+        return jwtBuilder
                 .expiresIn(Duration.ofHours(1))
                 .issuedAt(Instant.now())
                 .sign();
