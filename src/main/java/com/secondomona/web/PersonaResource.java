@@ -14,7 +14,7 @@ import jakarta.ws.rs.core.SecurityContext;
 
 import java.util.List;
 
-@Path("api/persone")
+@Path("/api")
 @DenyAll
 public class PersonaResource {
 
@@ -23,6 +23,7 @@ public class PersonaResource {
     public PersonaResource(PersonaService personaService) {
         this.personaService = personaService;
     }
+
     @Path("/dipendenti")
     @POST
     @RolesAllowed({"Admin", "Portineria"})
@@ -48,20 +49,20 @@ public class PersonaResource {
     }
 
     @Path("/visitatori")
-    @RolesAllowed({"access-token"})
     @GET
+    @RolesAllowed({"access-token"})
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public List<Persona> getVisitatori() {
         return personaService.getVisitatori();
     }
 
-    @Path("/visitatori")
-    @RolesAllowed({"Portineria", "Admin"})
+    @Path("/visitatore")
     @POST
+    @RolesAllowed({"Admin", "Portineria"})
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Persona createVisitatore(VisitatoreRequest persona) {
-        return personaService.creaVisitatore(persona);
+        return personaService.createVisitatore(persona);
     }
 }

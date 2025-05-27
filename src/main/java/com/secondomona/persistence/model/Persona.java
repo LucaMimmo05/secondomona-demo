@@ -143,7 +143,7 @@ public class Persona {
     private String ruolo;
 
     @Password
-    @Column(name = "PasswordHash", nullable = false, length = 255)
+    @Column(name = "PasswordHash", length = 255)
     private String passwordHash;
 
     public Persona() {}
