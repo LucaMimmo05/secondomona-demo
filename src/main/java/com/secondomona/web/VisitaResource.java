@@ -1,8 +1,6 @@
 package com.secondomona.web;
 
-import com.secondomona.dto.PersonaDTO;
 import com.secondomona.dto.RichiestaVisitaDTO;
-import com.secondomona.persistence.model.Persona;
 import com.secondomona.persistence.model.RichiestaVisita;
 import com.secondomona.service.VisitaService;
 import jakarta.annotation.security.RolesAllowed;
@@ -35,9 +33,17 @@ public class VisitaResource {
 
     @Path("/attive")
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public List<RichiestaVisitaDTO> visiteAttive() {
         return visitaService.getVisiteAttive();
+    }
+
+    @Path("/in-attesa")
+    @GET
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<RichiestaVisitaDTO> visiteInAttesa() {
+        return visitaService.getVisiteInAttesa();
     }
 }
