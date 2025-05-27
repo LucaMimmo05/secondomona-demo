@@ -10,7 +10,6 @@ import com.secondomona.web.model.PersonaResponse;
 import com.secondomona.web.model.VisitatoreRequest;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
@@ -19,12 +18,11 @@ import java.util.List;
 public class PersonaService {
 
     private final PersonaRepository personaRepository;
+    private final TesseraRepository tesseraRepository;
 
-    @Inject
-    private TesseraRepository tesseraRepository;
-
-    public PersonaService(PersonaRepository personaRepository) {
+    public PersonaService(PersonaRepository personaRepository, TesseraRepository tesseraRepository) {
         this.personaRepository = personaRepository;
+        this.tesseraRepository = tesseraRepository;
     }
 
     public PersonaResponse authenticate(String email, String password) {
@@ -139,7 +137,7 @@ public class PersonaService {
         return personaRepository.getVisitatori();
     }
 
-    public Persona creaVisitatore(VisitatoreRequest request) {
+    public Persona createVisitatore(VisitatoreRequest request) {
         Persona persona = new Persona();
 
         persona.setIdRuna(request.getIdRuna());
@@ -182,7 +180,7 @@ public class PersonaService {
         persona.setFlagPrivacy(request.getFlagPrivacy());
         persona.setDataConsegnaPrivacy(request.getDataConsegnaPrivacy());
         persona.setCentroCosto(request.getCentroCosto());
-        persona.setPasswordHash(request.getPassword());
+        persona.setPasswordHash(null);
 
         return personaRepository.save(persona);
     }
