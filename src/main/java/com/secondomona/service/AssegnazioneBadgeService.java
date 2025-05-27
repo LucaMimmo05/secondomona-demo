@@ -8,6 +8,7 @@ import com.secondomona.persistence.TesseraRepository;
 import com.secondomona.persistence.model.AssegnazioneBadge;
 import com.secondomona.persistence.model.Persona;
 import com.secondomona.persistence.model.Tessera;
+import com.secondomona.web.PersonaResource;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -28,6 +29,9 @@ public class AssegnazioneBadgeService {
 
     @Inject
     PersonaRepository personaRepository;
+
+    @Inject
+    PersonaResource personaResource;
 
     public List<AssegnazioneBadgeDTO> getAllAssegnazioni() {
         return assegnazioneBadgeRepository.listAll().stream()
@@ -81,7 +85,6 @@ public class AssegnazioneBadgeService {
         if (assegnazione == null) {
             throw new NotFoundException("Assegnazione badge non trovata con ID: " + id);
         }
-
         assegnazione.setDataFine(LocalDateTime.now());
         assegnazioneBadgeRepository.persist(assegnazione);
         return mapToDTO(assegnazione);
@@ -92,7 +95,6 @@ public class AssegnazioneBadgeService {
         if (persona == null) {
             throw new NotFoundException("Persona non trovata con ID: " + idPersona);
         }
-
         return assegnazioneBadgeRepository.findByPersona(persona).stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
@@ -100,9 +102,19 @@ public class AssegnazioneBadgeService {
 
     private AssegnazioneBadgeDTO mapToDTO(AssegnazioneBadge entity) {
         AssegnazioneBadgeDTO dto = new AssegnazioneBadgeDTO();
-        dto.setIdAssegnazione(entity.getIdAssegnazione() != null ? entity.getIdAssegnazione().longValue() : null);
-        dto.setIdTessera(entity.getTessera().getIdTessera() != null ? entity.getTessera().getIdTessera().longValue() : null);
-        dto.setIdPersona(entity.getPersona().getIdPersona() != null ? entity.getPersona().getIdPersona().longValue() : null);
+
+        dto.setIdAssegnazione(
+                entity.getIdAssegnazione() != null ? entity.getIdAssegnazione().longValue() : null
+        );
+
+        dto.setIdTessera(
+                entity.getTessera().getIdTessera() != null ? entity.getTessera().getIdTessera().longValue() : null
+        );
+
+        dto.setIdPersona(
+                entity.getPersona().getIdPersona() != null ? entity.getPersona().getIdPersona().longValue() : null
+        );
+
         dto.setDataInizio(entity.getDataInizio());
         dto.setDataFine(entity.getDataFine());
         dto.setNumeroTessera(entity.getTessera().getCodiceTessera());
@@ -112,8 +124,13 @@ public class AssegnazioneBadgeService {
         personaDTO.setNome(entity.getPersona().getNome());
         personaDTO.setCognome(entity.getPersona().getCognome());
         personaDTO.setMail(entity.getPersona().getMail());
+
         dto.setPersona(personaDTO);
 
         return dto;
+    }
+
+    public AssegnazioneBadge assegnazioneBadge(Persona persona) {
+        return assegnazioneBadgeRepository.assegnaBadge(persona);
     }
 }
