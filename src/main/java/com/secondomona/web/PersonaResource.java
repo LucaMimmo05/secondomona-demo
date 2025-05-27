@@ -57,6 +57,7 @@ public class PersonaResource {
     }
 
     @Path("/visitatori")
+    @RolesAllowed({"Portineria", "Admin"})
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
