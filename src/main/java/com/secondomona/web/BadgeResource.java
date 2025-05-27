@@ -1,6 +1,8 @@
 package com.secondomona.web;
 
 import com.secondomona.dto.AssegnazioneBadgeDTO;
+import com.secondomona.persistence.model.AssegnazioneBadge;
+import com.secondomona.persistence.model.Persona;
 import com.secondomona.service.AssegnazioneBadgeService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -34,8 +36,8 @@ public class BadgeResource {
 
     @POST
     @Path("/assegna")
-    public Response assegnaBadge(AssegnazioneBadgeDTO dto) {
-        AssegnazioneBadgeDTO result = assegnazioneBadgeService.assegnaBadge(dto);
+    public Response assegnaBadge(Persona persona) {
+        AssegnazioneBadge result = assegnazioneBadgeService.assegnazioneBadge(persona);
         return Response.status(Response.Status.CREATED).entity(result).build();
     }
 

@@ -51,25 +51,7 @@ public class VisitaService {
 
     public List<RichiestaVisitaDTO> getVisiteInAttesa() {
         return visitaRepository.findVisiteInAttesa().stream()
-                .map(visita -> new RichiestaVisitaDTO(
-                        visita.getIdRichiesta(),
-                        new PersonaDTO(
-                                visita.getVisitatore().getNome(),
-                                visita.getVisitatore().getCognome(),
-                                visita.getVisitatore().getMail()
-                        ),
-                        new PersonaDTO(
-                                visita.getRichiedente().getNome(),
-                                visita.getRichiedente().getCognome(),
-                                visita.getRichiedente().getMail()
-                        ),
-                        visita.getDataInizio(),
-                        visita.getDataFine(),
-                        visita.getMotivoVisita(),
-                        visita.getFlagAccessoAutomezzo(),
-                        visita.getFlagRichiestaDpi(),
-                        visita.getMaterialeInformatico()
-                ))
+                .map(this::toDTO)
                 .toList();
     }
 

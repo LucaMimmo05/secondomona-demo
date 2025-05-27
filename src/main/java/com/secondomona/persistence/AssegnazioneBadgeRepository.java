@@ -22,20 +22,16 @@ public class AssegnazioneBadgeRepository implements PanacheRepository<Assegnazio
     public AssegnazioneBadge findActiveAssegnazione(Persona persona) {
         return find("persona = ?1 AND dataFine IS NULL", persona).firstResult();
     }
+
     public AssegnazioneBadge assegnaBadge(Persona persona) {
         Integer id = persona.getIdPersona();
-
-        AssegnazioneBadge badgeDaAssegnare = find("IdPersona IS NULL AND Categorie = 'Visitatore'")
-                .firstResult();
-
+        AssegnazioneBadge badgeDaAssegnare = find("IdPersona IS NULL AND Categorie = 'Visitatore'").firstResult();
         if (badgeDaAssegnare == null) {
-            throw new IllegalStateException(
-                    "Nessun badge disponibile per l'assegnazione alla persona con ID: " + id
-            );
+            throw new IllegalStateException("Nessun badge disponibile per l'assegnazione alla persona con ID: " + id);
         }
-
         badgeDaAssegnare.setPersona(persona);
-        return badgeDaAssegnare;
-    }
 
+        return badgeDaAssegnare;
+
+    }
 }
