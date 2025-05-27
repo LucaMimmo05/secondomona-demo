@@ -1,5 +1,6 @@
 package com.secondomona.persistence;
 
+import com.secondomona.persistence.model.Persona;
 import com.secondomona.persistence.model.Tessera;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;

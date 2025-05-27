@@ -14,7 +14,7 @@ public class Tessera {
     private Integer idTessera;
 
     @ManyToOne
-    @JoinColumn(name = "IdPersona", nullable = false)
+    @JoinColumn(name = "IdPersona")
     private Persona persona;
 
     @Column(name = "IdCategoria")
