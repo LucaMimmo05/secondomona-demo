@@ -134,5 +134,4 @@ public class AssegnazioneBadgeService {
         return assegnazioneBadgeRepository.assegnaBadge(persona);
     }
 
-    }
 }
