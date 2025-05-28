@@ -10,6 +10,7 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 
 import java.util.List;
@@ -48,18 +49,43 @@ public class PersonaResource {
         return personaService.getAllDipendenti();
     }
 
-    @Path("/visitatori")
+    @Path("/dipendenti/{id}")
     @GET
+    @RolesAllowed({"Admin", "Portineria", "access-token"})
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getDipendenteById(@PathParam("id") Long id) {
+        try {
+            // Chiamiamo il servizio per recuperare il dipendente tramite ID
+            PersonaResponse persona = personaService.getPersonaById(id);
+
+            // Se la persona non è stata trovata, restituiamo 404 Not Found
+            if (persona == null) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("Dipendente non trovato con ID: " + id)
+                        .build();
+            }
+
+            // Altrimenti restituiamo i dati della persona
+            return Response.ok(persona).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Errore durante il recupero del dipendente: " + e.getMessage())
+                    .build();
+        }
+    }
+
+    @Path("/visitatori")
     @RolesAllowed({"access-token"})
+    @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public List<Persona> getVisitatori() {
         return personaService.getVisitatori();
     }
 
-    @Path("/visitatore")
+    @Path("/visitatori")
+    @RolesAllowed({"Portineria", "Admin"})
     @POST
-    @RolesAllowed({"Admin", "Portineria"})
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Persona createVisitatore(VisitatoreRequest persona) {

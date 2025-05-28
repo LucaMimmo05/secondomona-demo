@@ -13,7 +13,8 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -82,7 +83,7 @@ public class TimbraturaDipendenteService {
         TimbraturaDipendente timbratura = new TimbraturaDipendente();
         timbratura.setTessera(tessera);
         timbratura.setDataOraTimbratura(dto.getDataOraTimbratura() != null ?
-                dto.getDataOraTimbratura() : LocalDateTime.now());
+                dto.getDataOraTimbratura() : OffsetDateTime.now());
         timbratura.setTipoTimbratura(dto.getTipoTimbratura());
         timbratura.setNote(dto.getNote());
         timbratura.setValidata(false); // Le nuove timbrature non sono validate di default
@@ -106,7 +107,7 @@ public class TimbraturaDipendenteService {
 
         timbratura.setValidata(true);
         timbratura.setValidataDa(validatore.getIdPersona());
-        timbratura.setDataValidazione(LocalDateTime.now());
+        timbratura.setDataValidazione(OffsetDateTime.now());
 
         timbraturaDipendenteRepository.persist(timbratura);
         return mapToDTO(timbratura);
@@ -129,8 +130,8 @@ public class TimbraturaDipendenteService {
     }
 
     public List<TimbraturaDipendenteDTO> getTimbratureByDate(LocalDate data) {
-        LocalDateTime inizio = data.atStartOfDay();
-        LocalDateTime fine = inizio.plusDays(1).minusNanos(1);
+        OffsetDateTime inizio = data.atStartOfDay().atOffset(ZoneOffset.UTC);
+        OffsetDateTime fine = data.plusDays(1).atStartOfDay().atOffset(ZoneOffset.UTC).minusNanos(1);
 
         return timbraturaDipendenteRepository.findTimbraturaByDate(inizio).stream()
                 .map(this::mapToDTO)
@@ -167,14 +168,17 @@ public class TimbraturaDipendenteService {
 
         // Ottieni la data di oggi
         LocalDate oggi = LocalDate.now();
-        LocalDateTime inizioGiorno = oggi.atStartOfDay();
-        LocalDateTime fineGiorno = oggi.plusDays(1).atStartOfDay().minusNanos(1);
+        OffsetDateTime inizioGiorno = oggi.atStartOfDay().atOffset(ZoneOffset.UTC);
+        OffsetDateTime fineGiorno = oggi.plusDays(1).atStartOfDay().atOffset(ZoneOffset.UTC).minusNanos(1);
 
-        // Recupera tutte le timbrature e filtra per persona e data odierna
-        List<TimbraturaDipendente> timbrature = timbraturaDipendenteRepository.listAll().stream()
-            .filter(t -> t.getTessera().getPersona().getIdPersona().equals(persona.getIdPersona()) &&
-                   t.getDataOraTimbratura().isAfter(inizioGiorno) &&
-                   t.getDataOraTimbratura().isBefore(fineGiorno))
+        // Utilizzo la query del repository più efficiente e sicura contro i null
+        List<TimbraturaDipendente> timbrature = timbraturaDipendenteRepository.findAll().stream()
+            .filter(t -> t.getTessera() != null &&
+                   t.getTessera().getPersona() != null &&
+                   idPersona.equals(t.getTessera().getPersona().getIdPersona()) &&
+                   t.getDataOraTimbratura() != null &&
+                   !t.getDataOraTimbratura().isBefore(inizioGiorno) &&
+                   !t.getDataOraTimbratura().isAfter(fineGiorno))
             .sorted((t1, t2) -> t1.getDataOraTimbratura().compareTo(t2.getDataOraTimbratura()))
             .collect(Collectors.toList());
 

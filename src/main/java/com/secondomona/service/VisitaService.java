@@ -32,12 +32,14 @@ public class VisitaService {
                         new PersonaDTO(
                                 visita.getVisitatore().getNome(),
                                 visita.getVisitatore().getCognome(),
-                                visita.getVisitatore().getMail()
+                                visita.getVisitatore().getMail(),
+                                visita.getVisitatore().getIdPersona()
                         ),
                         new PersonaDTO(
                                 visita.getRichiedente().getNome(),
                                 visita.getRichiedente().getCognome(),
-                                visita.getRichiedente().getMail()
+                                visita.getRichiedente().getMail(),
+                                visita.getVisitatore().getIdPersona()
                         ),
                         visita.getDataInizio(),
                         visita.getDataFine(),
@@ -51,25 +53,7 @@ public class VisitaService {
 
     public List<RichiestaVisitaDTO> getVisiteInAttesa() {
         return visitaRepository.findVisiteInAttesa().stream()
-                .map(visita -> new RichiestaVisitaDTO(
-                        visita.getIdRichiesta(),
-                        new PersonaDTO(
-                                visita.getVisitatore().getNome(),
-                                visita.getVisitatore().getCognome(),
-                                visita.getVisitatore().getMail()
-                        ),
-                        new PersonaDTO(
-                                visita.getRichiedente().getNome(),
-                                visita.getRichiedente().getCognome(),
-                                visita.getRichiedente().getMail()
-                        ),
-                        visita.getDataInizio(),
-                        visita.getDataFine(),
-                        visita.getMotivoVisita(),
-                        visita.getFlagAccessoAutomezzo(),
-                        visita.getFlagRichiestaDpi(),
-                        visita.getMaterialeInformatico()
-                ))
+                .map(this::toDTO)
                 .toList();
     }
 
@@ -86,6 +70,7 @@ public class VisitaService {
         visitatoreDto.setNome(entity.getVisitatore().getNome());
         visitatoreDto.setCognome(entity.getVisitatore().getCognome());
         visitatoreDto.setMail(entity.getVisitatore().getMail());
+        visitatoreDto.setIdPersona(entity.getVisitatore().getIdPersona());
         dto.setVisitatore(visitatoreDto);
 
         PersonaDTO richiedenteDto = new PersonaDTO();

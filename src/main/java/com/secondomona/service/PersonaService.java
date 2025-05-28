@@ -93,6 +93,25 @@ public class PersonaService {
     }
 
     /**
+     * Recupera una persona tramite il suo ID
+     * @param id ID della persona da recuperare
+     * @return PersonaResponse con i dati della persona, o null se non trovata
+     */
+    public PersonaResponse getPersonaById(Long id) {
+        Persona persona = personaRepository.findById(id);
+        return toPersonaResponse(persona);
+    }
+
+    /**
+     * Recupera una persona completa tramite il suo ID
+     * @param id ID della persona da recuperare
+     * @return Persona con tutti i dati, o null se non trovata
+     */
+    public Persona getFullPersonaById(Long id) {
+        return personaRepository.findById(id);
+    }
+
+    /**
      * Recupera la tessera attiva associata a una persona
      * @param persona La persona di cui recuperare la tessera
      * @return La tessera attiva, o null se non esiste
@@ -138,6 +157,15 @@ public class PersonaService {
     }
 
     public Persona createVisitatore(VisitatoreRequest request) {
+        // Verifico se esiste già una persona con lo stesso numero di documento
+        if (request.getNumeroDocumento() != null && !request.getNumeroDocumento().isEmpty()) {
+            Persona existingPersona = personaRepository.findByNumeroDocumento(request.getNumeroDocumento());
+            if (existingPersona != null) {
+                // Se esiste già, lancio un'eccezione personalizzata
+                throw new com.secondomona.service.exception.DocumentoGiaEsistenteException(request.getNumeroDocumento());
+            }
+        }
+
         Persona persona = new Persona();
 
         persona.setIdRuna(request.getIdRuna());

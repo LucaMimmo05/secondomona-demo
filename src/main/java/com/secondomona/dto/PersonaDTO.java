@@ -1,14 +1,18 @@
 package com.secondomona.dto;
 
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
+
 public class PersonaDTO {
     private String nome;
     private String cognome;
     private String mail;
+    private Integer idPersona;
 
-    public PersonaDTO(String nomeVisitatore, String cognomeVisitatore, String emailVisitatore) {
+    public PersonaDTO(String nomeVisitatore, String cognomeVisitatore, String emailVisitatore, Integer idPersona) {
         this.nome = nomeVisitatore;
         this.cognome = cognomeVisitatore;
         this.mail = emailVisitatore;
+        this.idPersona = idPersona;
     }
 
     public PersonaDTO() {
@@ -38,5 +42,9 @@ public class PersonaDTO {
     public void setMail(String mail) {
         this.mail = mail;
     }
+
+    public Integer getIdPersona() { return idPersona; }
+
+    public void setIdPersona(Integer idPersona) { this.idPersona = idPersona; }
 
 }
