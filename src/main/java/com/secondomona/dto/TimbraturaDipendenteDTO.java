@@ -1,17 +1,17 @@
 package com.secondomona.dto;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public class TimbraturaDipendenteDTO {
     private Long idTimbratura;
     private Long idPersona;
     private Long idTessera;
-    private LocalDateTime dataOraTimbratura;
+    private OffsetDateTime dataOraTimbratura;
     private String tipoTimbratura;
     private String note;
     private Boolean validata;
     private Long validataDa;
-    private LocalDateTime dataValidazione;
+    private OffsetDateTime dataValidazione;
 
     // Campi aggiuntivi per le risposte
     private String nomeDipendente;
@@ -45,11 +45,11 @@ public class TimbraturaDipendenteDTO {
         this.idTessera = idTessera;
     }
 
-    public LocalDateTime getDataOraTimbratura() {
+    public OffsetDateTime getDataOraTimbratura() {
         return dataOraTimbratura;
     }
 
-    public void setDataOraTimbratura(LocalDateTime dataOraTimbratura) {
+    public void setDataOraTimbratura(OffsetDateTime dataOraTimbratura) {
         this.dataOraTimbratura = dataOraTimbratura;
     }
 
@@ -85,11 +85,11 @@ public class TimbraturaDipendenteDTO {
         this.validataDa = validataDa;
     }
 
-    public LocalDateTime getDataValidazione() {
+    public OffsetDateTime getDataValidazione() {
         return dataValidazione;
     }
 
-    public void setDataValidazione(LocalDateTime dataValidazione) {
+    public void setDataValidazione(OffsetDateTime dataValidazione) {
         this.dataValidazione = dataValidazione;
     }
 
