@@ -2,6 +2,7 @@ package com.secondomona.persistence.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "Timbrature")  // Modificato il nome della tabella da TimbratureDipendenti a Timbrature
@@ -17,7 +18,7 @@ public class TimbraturaDipendente {
     private Tessera tessera;
 
     @Column(name = "DataOraTimbratura", nullable = false)
-    private LocalDateTime dataOraTimbratura;
+    private OffsetDateTime dataOraTimbratura;
 
     @Column(name = "TipoTimbratura", nullable = false, length = 20)
     private String tipoTimbratura; // "ENTRATA" o "USCITA"
@@ -32,12 +33,12 @@ public class TimbraturaDipendente {
     private Integer validataDa;
 
     @Column(name = "DataValidazione")
-    private LocalDateTime dataValidazione;
+    private OffsetDateTime dataValidazione;
 
     // Costruttori
     public TimbraturaDipendente() {}
 
-    public TimbraturaDipendente(Tessera tessera, LocalDateTime dataOraTimbratura, String tipoTimbratura) {
+    public TimbraturaDipendente(Tessera tessera, OffsetDateTime dataOraTimbratura, String tipoTimbratura) {
         this.tessera = tessera;
         this.dataOraTimbratura = dataOraTimbratura;
         this.tipoTimbratura = tipoTimbratura;
@@ -65,11 +66,11 @@ public class TimbraturaDipendente {
         return tessera != null ? tessera.getPersona() : null;
     }
 
-    public LocalDateTime getDataOraTimbratura() {
+    public OffsetDateTime getDataOraTimbratura() {
         return dataOraTimbratura;
     }
 
-    public void setDataOraTimbratura(LocalDateTime dataOraTimbratura) {
+    public void setDataOraTimbratura(OffsetDateTime dataOraTimbratura) {
         this.dataOraTimbratura = dataOraTimbratura;
     }
 
@@ -105,11 +106,11 @@ public class TimbraturaDipendente {
         this.validataDa = validataDa;
     }
 
-    public LocalDateTime getDataValidazione() {
+    public OffsetDateTime getDataValidazione() {
         return dataValidazione;
     }
 
-    public void setDataValidazione(LocalDateTime dataValidazione) {
+    public void setDataValidazione(OffsetDateTime dataValidazione) {
         this.dataValidazione = dataValidazione;
     }
 }
