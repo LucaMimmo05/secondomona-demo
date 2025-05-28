@@ -1,113 +1,102 @@
-# secondomona-demo
+# SecondoMona Demo
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+Questo progetto è un'applicazione Java basata su Quarkus per la gestione di visitatori, badge e timbrature.
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+## Requisiti
 
-## Running the application in dev mode
+- JDK 11 o superiore
+- Maven 3.8 o superiore
+- Microsoft SQL Server
+- Git
 
-You can run your application in dev mode that enables live coding using:
+## Configurazione del Database
 
-```shell script
+L'applicazione utilizza Microsoft SQL Server come database. È necessario configurare le seguenti variabili d'ambiente prima di avviare l'applicazione:
+
+- `DB_USERNAME`: nome utente per l'accesso al database
+- `DB_PASSWORD`: password per l'accesso al database
+- `DB_URL`: URL di connessione JDBC, ad esempio `jdbc:sqlserver://localhost:1433;databaseName=secondomona;encrypt=false`
+
+
+## Avvio dell'applicazione
+
+### Modalità sviluppo
+
+Per avviare l'applicazione in modalità sviluppo con hot reload:
+
+```shell
+# Impostare le variabili d'ambiente (Windows)
+set DB_USERNAME=utente_database
+set DB_PASSWORD=password_database
+set DB_URL=jdbc:sqlserver://localhost:1433;databaseName=secondomona;encrypt=false
+
+# Impostare le variabili d'ambiente (Linux/Mac)
+export DB_USERNAME=utente_database
+export DB_PASSWORD=password_database
+export DB_URL=jdbc:sqlserver://localhost:1433;databaseName=secondomona;encrypt=false
+
+# Avvio in modalità sviluppo
 ./mvnw quarkus:dev
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
+L'applicazione sarà disponibile all'indirizzo: http://localhost:8080
+L'interfaccia di sviluppo Quarkus Dev UI è disponibile all'indirizzo: http://localhost:8080/q/dev/
 
-## Packaging and running the application
+### Packaging e distribuzione
 
-The application can be packaged using:
+Per creare un pacchetto eseguibile:
 
-```shell script
+```shell
 ./mvnw package
 ```
 
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
+Questo comando genera il file `quarkus-run.jar` nella directory `target/quarkus-app/`.
+Per eseguire l'applicazione pacchettizzata:
 
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
+```shell
+# Impostare le variabili d'ambiente necessarie
+java -jar target/quarkus-app/quarkus-run.jar
+```
 
-If you want to build an _über-jar_, execute the following command:
+Per creare un file JAR autonomo (über-jar):
 
-```shell script
+```shell
 ./mvnw package -Dquarkus.package.jar.type=uber-jar
 ```
 
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
+Il file JAR risultante sarà eseguibile con:
 
-## Creating a native executable
-
-You can create a native executable using:
-
-```shell script
-./mvnw package -Dnative
+```shell
+java -jar target/*-runner.jar
 ```
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
+## Configurazione CORS
 
-```shell script
-./mvnw package -Dnative -Dquarkus.native.container-build=true
-```
+L'applicazione è configurata per consentire richieste CORS da `http://localhost:5173`, che è l'URL predefinito del frontend. Se il frontend è in esecuzione su un URL diverso, modificare la proprietà `quarkus.http.cors.origins` nel file `application.properties`.
 
-You can then execute your native executable with: `./target/secondomona-demo-1.0-SNAPSHOT-runner`
+## Risoluzione dei problemi
 
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/maven-tooling>.
+### Errori di connessione al database
+- Verificare che il server SQL Server sia in esecuzione e accessibile
+- Controllare che le credenziali nelle variabili d'ambiente siano corrette
+- Verificare che il database esista o abbia i permessi per essere creato automaticamente
 
-## Related Guides
+### Errori di avvio dell'applicazione
+- Verificare i log di avvio per identificare eventuali errori
+- Assicurarsi che tutte le dipendenze siano state scaricate correttamente
 
-- REST resources for Hibernate ORM with Panache ([guide](https://quarkus.io/guides/rest-data-panache)): Generate Jakarta
-  REST resources for your Hibernate Panache entities and repositories
-- REST ([guide](https://quarkus.io/guides/rest)): A Jakarta REST implementation utilizing build time processing and
-  Vert.x. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on
-  it.
-- Qute Web ([guide](https://quarkiverse.github.io/quarkiverse-docs/quarkus-qute-web/dev/index.html)): Serves Qute
-  templates directly over HTTP.
-- JDBC Driver - Microsoft SQL Server ([guide](https://quarkus.io/guides/datasource)): Connect to the Microsoft SQL
-  Server database via JDBC
-- REST Qute ([guide](https://quarkus.io/guides/qute-reference#rest_integration)): Qute integration for Quarkus REST.
-  This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it.
-- REST Jackson ([guide](https://quarkus.io/guides/rest#json-serialisation)): Jackson serialization support for Quarkus
-  REST. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it
-- Hibernate ORM with Panache ([guide](https://quarkus.io/guides/hibernate-orm-panache)): Simplify your persistence code
-  for Hibernate ORM via the active record or the repository pattern
-- Agroal - Database connection pool ([guide](https://quarkus.io/guides/datasource)): JDBC Datasources and connection
-  pooling
-- SmallRye JWT ([guide](https://quarkus.io/guides/security-jwt)): Secure your applications with JSON Web Token
-- SmallRye JWT Build ([guide](https://quarkus.io/guides/security-jwt-build)): Create JSON Web Token with SmallRye JWT
-  Build API
+## Struttura del progetto
 
-## Provided Code
+- `src/main/java/com/secondomona/dto`: Data Transfer Objects
+- `src/main/java/com/secondomona/persistence`: Repository e modelli del database
+- `src/main/java/com/secondomona/service`: Logica dei servizi
+- `src/main/java/com/secondomona/web`: Controller REST e gestione delle eccezioni
+- `src/main/resources`: File di configurazione e script SQL
 
-### Hibernate ORM
+## Tecnologie utilizzate
 
-Create your first JPA entity
-
-[Related guide section...](https://quarkus.io/guides/hibernate-orm)
-
-[Related Hibernate with Panache section...](https://quarkus.io/guides/hibernate-orm-panache)
-
-### REST Data with Panache
-
-Generating Jakarta REST resources with Panache
-
-[Related guide section...](https://quarkus.io/guides/rest-data-panache)
-
-### Qute Web
-
-Qute templates like `some-page.html` served via HTTP automatically by Quarkus from the `src/main/resource/templates/pub`
-directory. No controllers needed. Once the quarkus app is started visit the generated page
-at http://localhost:8080/some-page?name=World
-
-[Related guide section...](https://docs.quarkiverse.io/quarkus-qute-web/dev/index.html)
-
-### REST
-
-Easily start your REST Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
-
-### REST Qute
-
-Create your web page using Quarkus REST and Qute
-
-[Related guide section...](https://quarkus.io/guides/qute#type-safe-templates)
+- Quarkus: framework Java
+- Hibernate ORM con Panache: ORM per la persistenza dei dati
+- REST con Jackson: API RESTful con serializzazione JSON
+- SmallRye JWT: autenticazione e autorizzazione con JWT
+- Microsoft SQL Server: database relazionale
