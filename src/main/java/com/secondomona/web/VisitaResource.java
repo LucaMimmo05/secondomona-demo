@@ -6,6 +6,7 @@ import com.secondomona.service.VisitaService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import java.util.List;
 
@@ -45,5 +46,23 @@ public class VisitaResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<RichiestaVisitaDTO> visiteInAttesa() {
         return visitaService.getVisiteInAttesa();
+    }
+
+    /**
+     * Endpoint per concludere una visita
+     *
+     * @param idRichiesta ID della richiesta di visita da concludere
+     * @return La richiesta di visita aggiornata o 404 se non trovata
+     */
+    @Path("/{idRichiesta}/conclusione")
+    @PUT
+    public Response concludiVisita(@PathParam("idRichiesta") Integer idRichiesta) {
+        RichiestaVisitaDTO visitaAggiornata = visitaService.concludiVisita(idRichiesta);
+        if (visitaAggiornata == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                .entity("Visita con ID " + idRichiesta + " non trovata")
+                .build();
+        }
+        return Response.ok(visitaAggiornata).build();
     }
 }

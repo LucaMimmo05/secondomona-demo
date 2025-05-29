@@ -5,11 +5,13 @@ import com.secondomona.persistence.model.RichiestaVisita;
 import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @ApplicationScoped
 public class VisitaRepository implements PanacheRepositoryBase<RichiestaVisita, Long> {
@@ -35,9 +37,28 @@ public class VisitaRepository implements PanacheRepositoryBase<RichiestaVisita, 
                 .getResultList();
     }
 
-
+    @Transactional
     public RichiestaVisita createVisita(RichiestaVisita visita) {
         getEntityManager().persist(visita);
         return visita;
+    }
+
+    public Optional<RichiestaVisita> concludiVisita(Integer idRichiesta) {
+        RichiestaVisita visita = getEntityManager()
+                .createQuery("SELECT r FROM RichiestaVisita r WHERE r.idRichiesta = :id", RichiestaVisita.class)
+                .setParameter("id", idRichiesta)
+                .getResultStream()
+                .findFirst()
+                .orElse(null);
+
+        if (visita != null) {
+            // Impostiamo la data di fine alla data e ora attuale
+            OffsetDateTime now = ZonedDateTime.now(ZoneId.of("Europe/Rome")).toOffsetDateTime();
+            visita.setDataFine(now);
+            getEntityManager().merge(visita);
+            return Optional.of(visita);
+        }
+
+        return Optional.empty();
     }
 }
