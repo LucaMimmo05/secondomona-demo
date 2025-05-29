@@ -24,12 +24,19 @@ public class PersonaRepository implements PanacheRepositoryBase<Persona, Long> {
         return null;
     }
 
-
     public Persona findByEmail(String email) {
         return find(
                 "SELECT p FROM Persona p WHERE " +
                         "p.mail = :mail",
                 Parameters.with("mail", email)
+        ).firstResult();
+    }
+
+    public Persona findByNumeroDocumento(String numeroDocumento) {
+        return find(
+                "SELECT p FROM Persona p WHERE " +
+                        "p.numeroDocumento = :numeroDocumento",
+                Parameters.with("numeroDocumento", numeroDocumento)
         ).firstResult();
     }
 

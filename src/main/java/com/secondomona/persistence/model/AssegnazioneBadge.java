@@ -18,7 +18,7 @@ public class AssegnazioneBadge {
     private Tessera tessera;
 
     @ManyToOne
-    @JoinColumn(name = "IdPersona", nullable = false)
+    @JoinColumn(name = "IdPersona")
     private Persona persona;
 
     @Column(name = "DataInizio", nullable = false)
