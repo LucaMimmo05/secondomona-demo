@@ -9,7 +9,7 @@ import jakarta.ws.rs.core.MediaType;
 
 import java.util.List;
 
-@Path("/api")
+@Path("/api/visite")
 @RolesAllowed({"refresh-token", "access-token"})
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -26,17 +26,7 @@ public class VisitaResource {
         return visitaService.getAllRichiesteVisite();
     }
 
-    @Path("/visita")
-    @POST
-    @RolesAllowed({"Admin", "Dipendente"})
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public RichiestaVisitaDTO createVisit(RichiestaVisitaDTO visitaDTO) {
-        RichiestaVisita savedEntity = visitaService.createRichiestaVisitaFromDTO(visitaDTO);
-        return visitaService.toDTO(savedEntity);
-    }
-
-    @Path("visite/attive")
+    @Path("/attive")
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -44,11 +34,20 @@ public class VisitaResource {
         return visitaService.getVisiteAttive();
     }
 
-    @Path("visite/in-attesa")
+    @Path("/in-attesa")
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public List<RichiestaVisitaDTO> visiteInAttesa() {
         return visitaService.getVisiteInAttesa();
+    }
+
+    @POST
+    @RolesAllowed({"Admin", "Dipendente"})
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public RichiestaVisitaDTO createVisit(RichiestaVisitaDTO visitaDTO) {
+        RichiestaVisita savedEntity = visitaService.createRichiestaVisitaFromDTO(visitaDTO);
+        return visitaService.toDTO(savedEntity);
     }
 }
