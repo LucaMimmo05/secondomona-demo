@@ -2,12 +2,14 @@ package com.secondomona.web;
 
 import com.secondomona.dto.RichiestaVisitaDTO;
 import com.secondomona.persistence.model.RichiestaVisita;
+import com.secondomona.service.AssegnazioneBadgeService;
 import com.secondomona.service.VisitaService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Path("/api/visite")
@@ -16,9 +18,11 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 public class VisitaResource {
     private final VisitaService visitaService;
+    private final AssegnazioneBadgeService assegnazioneBadgeService;
 
-    public VisitaResource(VisitaService visitaService) {
+    public VisitaResource(VisitaService visitaService, AssegnazioneBadgeService assegnazioneBadgeService) {
         this.visitaService = visitaService;
+        this.assegnazioneBadgeService = assegnazioneBadgeService;
     }
 
     @GET
@@ -61,18 +65,31 @@ public class VisitaResource {
     }
 
     @POST
+    @Path("/nuova-visita")
     @RolesAllowed({"Admin", "Dipendente"})
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public RichiestaVisitaDTO createVisit(RichiestaVisitaDTO visitaDTO) {
-        RichiestaVisita savedEntity = visitaService.createRichiestaVisitaFromDTO(visitaDTO);
-        return visitaService.toDTO(savedEntity);
+    public Response creaVisitaEAssegnaBadge(RichiestaVisitaDTO visitaDTO) {
+        RichiestaVisita visita = visitaService.createRichiestaVisitaFromDTO(visitaDTO);
+        if (visita.getDataInizio().isBefore(OffsetDateTime.now().plusMinutes(1))) {
+            assegnazioneBadgeService.assegnazioneBadge(visita.getVisitatore());
+        }
+        return Response.status(Response.Status.CREATED)
+                .entity(visitaService.toDTO(visita))
+                .build();
     }
 
-    @POST
-    @Path("/{id}/termina")
+    @PUT
+    @Path("/{idRichiesta}/concludi-visita")
     @RolesAllowed({"Admin", "Portineria"})
-    public void endVisit(@PathParam("id") Integer id) {
-        visitaService.concludiVisita(id);
+    public Response concludiVisitaETerminaBadge(@PathParam("idRichiesta") Integer idRichiesta) {
+        RichiestaVisitaDTO visitaDTO = visitaService.concludiVisita(idRichiesta);
+        if (visitaDTO == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Visita non trovata con ID: " + idRichiesta)
+                    .build();
+        }
+        assegnazioneBadgeService.terminaUltimaAssegnazionePerPersona(visitaDTO.getVisitatore().getId());
+        return Response.ok(visitaDTO).build();
     }
 }

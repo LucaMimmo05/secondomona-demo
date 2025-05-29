@@ -1,6 +1,5 @@
 package com.secondomona.service;
 
-import com.secondomona.dto.AssegnazioneBadgeDTO;
 import com.secondomona.dto.PersonaDTO;
 import com.secondomona.dto.RichiestaVisitaDTO;
 import com.secondomona.persistence.PersonaRepository;
@@ -11,8 +10,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.WebApplicationException;
 
-import jakarta.ws.rs.NotFoundException;
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
