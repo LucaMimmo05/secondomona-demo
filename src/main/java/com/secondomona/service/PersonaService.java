@@ -58,6 +58,18 @@ public class PersonaService {
             throw new WebApplicationException("Numero documento già in uso", 400);
         }
 
+        // Verifica che la password non sia null o vuota
+        if (personaRequest.getPassword() == null || personaRequest.getPassword().isEmpty()) {
+            throw new WebApplicationException("La password non può essere vuota", 400);
+        }
+
+        // Genera un valore di matricola se non fornito
+        String matricola = personaRequest.getMatricola();
+        if (matricola == null || matricola.isEmpty()) {
+            // Genera una matricola casuale
+            matricola = "MAT-" + LocalDate.now().getYear() + "-" + new Random().nextInt(10000);
+        }
+
         String passwordHash = BcryptUtil.bcryptHash(personaRequest.getPassword());
 
         // Inizializza i valori predefiniti per i campi obbligatori che potrebbero essere null
@@ -104,7 +116,7 @@ public class PersonaService {
                 personaRequest.getMail(),
                 personaRequest.getFoto(),
                 personaRequest.getDataAssunzione(),
-                personaRequest.getMatricola(),
+                matricola,
                 personaRequest.getIdFiliale(),
                 personaRequest.getIdMansione(),
                 personaRequest.getIdDeposito(),
