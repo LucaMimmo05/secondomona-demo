@@ -10,7 +10,6 @@ import jakarta.ws.rs.core.Response;
 
 import java.util.List;
 
-
 @Path("/api/visite")
 @RolesAllowed({"refresh-token", "access-token"})
 @Consumes(MediaType.APPLICATION_JSON)
@@ -25,11 +24,6 @@ public class VisitaResource {
     @GET
     public List<RichiestaVisitaDTO> listaVisite() {
         return visitaService.getAllRichiesteVisite();
-    }
-
-    @POST
-    public RichiestaVisita create(RichiestaVisita visita) {
-        return visitaService.createRichiestaVisita(visita);
     }
 
     @Path("/attive")
@@ -64,5 +58,21 @@ public class VisitaResource {
                 .build();
         }
         return Response.ok(visitaAggiornata).build();
+    }
+
+    @POST
+    @RolesAllowed({"Admin", "Dipendente"})
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public RichiestaVisitaDTO createVisit(RichiestaVisitaDTO visitaDTO) {
+        RichiestaVisita savedEntity = visitaService.createRichiestaVisitaFromDTO(visitaDTO);
+        return visitaService.toDTO(savedEntity);
+    }
+
+    @POST
+    @Path("/{id}/termina")
+    @RolesAllowed({"Admin", "Portineria"})
+    public void endVisit(@PathParam("id") Long id) {
+        visitaService.endVisit(id);
     }
 }

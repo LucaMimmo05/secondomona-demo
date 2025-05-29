@@ -1,12 +1,21 @@
 package com.secondomona.service;
 
+import com.secondomona.dto.AssegnazioneBadgeDTO;
 import com.secondomona.dto.PersonaDTO;
 import com.secondomona.dto.RichiestaVisitaDTO;
+import com.secondomona.persistence.PersonaRepository;
 import com.secondomona.persistence.VisitaRepository;
+import com.secondomona.persistence.model.Persona;
 import com.secondomona.persistence.model.RichiestaVisita;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.WebApplicationException;
 
+
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.WebApplicationException;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,49 +23,27 @@ import java.util.Optional;
 public class VisitaService {
 
     private final VisitaRepository visitaRepository;
+    private final PersonaRepository personaRepository;
+    private final AssegnazioneBadgeService assegnazioneBadgeService;
 
     public VisitaService(VisitaRepository visitaRepository) {
         this.visitaRepository = visitaRepository;
+        this.personaRepository = personaRepository;
+        this.assegnazioneBadgeService = assegnazioneBadgeService;
     }
 
     public List<RichiestaVisitaDTO> getAllRichiesteVisite() {
         List<RichiestaVisita> richieste = visitaRepository.findAll().list();
 
-        return richieste.stream()
-                .map(this::toDTO)
-                .toList();
+        return richieste.stream().map(this::toDTO).toList();
     }
 
     public List<RichiestaVisitaDTO> getVisiteAttive() {
-        return visitaRepository.findVisiteAttive().stream()
-                .map(visita -> new RichiestaVisitaDTO(
-                        visita.getIdRichiesta(),
-                        new PersonaDTO(
-                                visita.getVisitatore().getNome(),
-                                visita.getVisitatore().getCognome(),
-                                visita.getVisitatore().getMail(),
-                                visita.getVisitatore().getIdPersona()
-                        ),
-                        new PersonaDTO(
-                                visita.getRichiedente().getNome(),
-                                visita.getRichiedente().getCognome(),
-                                visita.getRichiedente().getMail(),
-                                visita.getVisitatore().getIdPersona()
-                        ),
-                        visita.getDataInizio(),
-                        visita.getDataFine(),
-                        visita.getMotivoVisita(),
-                        visita.getFlagAccessoAutomezzo(),
-                        visita.getFlagRichiestaDpi(),
-                        visita.getMaterialeInformatico()
-                ))
-                .toList();
+        return visitaRepository.findVisiteAttive().stream().map(visita -> new RichiestaVisitaDTO(visita.getIdRichiesta(), new PersonaDTO(visita.getVisitatore().getIdPersona(), visita.getVisitatore().getNome(), visita.getVisitatore().getCognome(), visita.getVisitatore().getMail()), new PersonaDTO(visita.getRichiedente().getIdPersona(), visita.getRichiedente().getNome(), visita.getRichiedente().getCognome(), visita.getRichiedente().getMail()), visita.getDataInizio(), visita.getDataFine(), visita.getMotivoVisita(), visita.getFlagAccessoAutomezzo(), visita.getFlagRichiestaDpi(), visita.getMaterialeInformatico())).toList();
     }
 
     public List<RichiestaVisitaDTO> getVisiteInAttesa() {
-        return visitaRepository.findVisiteInAttesa().stream()
-                .map(this::toDTO)
-                .toList();
+        return visitaRepository.findVisiteInAttesa().stream().map(visita -> new RichiestaVisitaDTO(visita.getIdRichiesta(), new PersonaDTO(visita.getVisitatore().getIdPersona(), visita.getVisitatore().getNome(), visita.getVisitatore().getCognome(), visita.getVisitatore().getMail()), new PersonaDTO(visita.getRichiedente().getIdPersona(), visita.getRichiedente().getNome(), visita.getRichiedente().getCognome(), visita.getRichiedente().getMail()), visita.getDataInizio(), visita.getDataFine(), visita.getMotivoVisita(), visita.getFlagAccessoAutomezzo(), visita.getFlagRichiestaDpi(), visita.getMaterialeInformatico())).toList();
     }
 
 
@@ -72,7 +59,6 @@ public class VisitaService {
         visitatoreDto.setNome(entity.getVisitatore().getNome());
         visitatoreDto.setCognome(entity.getVisitatore().getCognome());
         visitatoreDto.setMail(entity.getVisitatore().getMail());
-        visitatoreDto.setIdPersona(entity.getVisitatore().getIdPersona());
         dto.setVisitatore(visitatoreDto);
 
         PersonaDTO richiedenteDto = new PersonaDTO();
@@ -84,8 +70,24 @@ public class VisitaService {
         return dto;
     }
 
-    public RichiestaVisita createRichiestaVisita(RichiestaVisita entity) {
-        return visitaRepository.createVisita(entity);
+    @Transactional
+    public RichiestaVisita createRichiestaVisitaFromDTO(RichiestaVisitaDTO dto) {
+        RichiestaVisita visita = new RichiestaVisita();
+        Persona richiedente = personaRepository.findById(dto.getRichiedente().getId());
+        Persona visitatore = personaRepository.findById(dto.getVisitatore().getId());
+        if (richiedente == null || visitatore == null) {
+            throw new WebApplicationException("Persona non trovata", 400);
+        }
+        visita.setRichiedente(richiedente);
+        visita.setVisitatore(visitatore);
+        visita.setDataInizio(dto.getDataInizio());
+        visita.setDataFine(dto.getDataFine());
+        visita.setMotivoVisita(dto.getMotivoVisita());
+        visita.setFlagAccessoAutomezzo(dto.isFlagAccessoAutomezzo());
+        visita.setFlagRichiestaDpi(dto.isFlagRichiestaDPI());
+        visita.setMaterialeInformatico(dto.getMaterialeInformatico());
+        visitaRepository.persist(visita);
+        return visita;
     }
 
     /**

@@ -15,12 +15,12 @@ public class RichiestaVisita {
     @Column(name = "IdRichiesta")
     private Integer idRichiesta;
 
-    @ManyToOne
-    @JoinColumn(name = "IdPersonaVisitatore", nullable = false)
+    @ManyToOne(optional = false, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "IdPersonaVisitatore")
     private Persona visitatore;
 
-    @ManyToOne
-    @JoinColumn(name = "IdPersonaRichiedente", nullable = false)
+    @ManyToOne(optional = false, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "IdPersonaRichiedente")
     private Persona richiedente;
 
     @Column(name = "DataInizio", nullable = false)
