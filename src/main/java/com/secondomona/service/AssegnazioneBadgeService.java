@@ -89,5 +89,21 @@ public class AssegnazioneBadgeService {
     public AssegnazioneBadge assegnazioneBadge(Persona persona) {
         return assegnazioneBadgeRepository.assegnaBadge(persona);
     }
+
+    @Transactional
+    public void terminaUltimaAssegnazionePerPersona(Long idPersona) {
+        Persona persona = personaRepository.findById(idPersona);
+        if (persona == null) {
+            throw new NotFoundException("Persona non trovata con ID: " + idPersona);
+        }
+        List<AssegnazioneBadge> assegnazioni = assegnazioneBadgeRepository.findByPersona(persona);
+        assegnazioni.stream()
+                .filter(a -> a.getDataFine() == null)
+                .max((a1, a2) -> a1.getDataInizio().compareTo(a2.getDataInizio()))
+                .ifPresent(a -> {
+                    a.setDataFine(LocalDateTime.now());
+                    assegnazioneBadgeRepository.persist(a);
+                });
+    }
 }
 
