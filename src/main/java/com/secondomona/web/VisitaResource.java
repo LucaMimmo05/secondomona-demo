@@ -61,7 +61,7 @@ public class VisitaResource {
     }
 
     @POST
-    @RolesAllowed({"Admin", "Dipendente"})
+    @RolesAllowed({"access-token"})
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public RichiestaVisitaDTO createVisit(RichiestaVisitaDTO visitaDTO) {

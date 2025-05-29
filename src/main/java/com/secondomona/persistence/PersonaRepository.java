@@ -15,12 +15,15 @@ public class PersonaRepository implements PanacheRepositoryBase<Persona, Long> {
     public Persona authenticate(String email, String password) {
         Persona persona = findByEmail(email);
         if (persona == null) {
+            System.out.println("no");
             return null;
         }
         boolean matches = BcryptUtil.matches(password, persona.getPasswordHash());
         if (matches) {
             return persona;
         }
+
+        System.out.println("Non match");
         return null;
     }
 

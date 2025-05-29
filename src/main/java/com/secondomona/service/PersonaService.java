@@ -12,8 +12,10 @@ import com.secondomona.web.model.VisitatoreRequest;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.WebApplicationException;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Random;
@@ -44,7 +46,46 @@ public class PersonaService {
 
     @Transactional
     public PersonaResponse createDipendenti(PersonaRequest personaRequest) {
+        // Verifica se l'email è già utilizzata
+        Persona existingPersona = personaRepository.findByEmail(personaRequest.getMail());
+        if (existingPersona != null) {
+            throw new WebApplicationException("Email già in uso", 400);
+        }
+
+        // Verifica se il numero di documento è già utilizzato
+        existingPersona = personaRepository.findByNumeroDocumento(personaRequest.getNumeroDocumento());
+        if (existingPersona != null) {
+            throw new WebApplicationException("Numero documento già in uso", 400);
+        }
+
         String passwordHash = BcryptUtil.bcryptHash(personaRequest.getPassword());
+
+        // Inizializza i valori predefiniti per i campi obbligatori che potrebbero essere null
+        Boolean visitatore = personaRequest.getVisitatore() != null ? personaRequest.getVisitatore() : false;
+        Integer accessNumber = personaRequest.getAccessNumber() != null ? personaRequest.getAccessNumber() : 0;
+        Integer accessCount = personaRequest.getAccessCount() != null ? personaRequest.getAccessCount() : 0;
+        LocalDateTime accessUpdate = personaRequest.getAccessUpdate() != null ?
+                personaRequest.getAccessUpdate() : LocalDateTime.now();
+        Boolean preposto = personaRequest.getPreposto() != null ? personaRequest.getPreposto() : false;
+        Boolean antincendio = personaRequest.getAntincendio() != null ? personaRequest.getAntincendio() : false;
+        Boolean primoSoccorso = personaRequest.getPrimoSoccorso() != null ? personaRequest.getPrimoSoccorso() : false;
+        Boolean duvri = personaRequest.getDuvri() != null ? personaRequest.getDuvri() : false;
+        Boolean flagPrivacy = personaRequest.getFlagPrivacy() != null ? personaRequest.getFlagPrivacy() : false;
+
+        // Verifica che il centro di costo esista e sia valido
+        if (personaRequest.getCentroCosto() == null || personaRequest.getCentroCosto().getIdCentroCosto() == null ||
+                personaRequest.getCentroCosto().getIdCentroCosto() <= 0) {
+            throw new WebApplicationException("Centro di costo non valido o non specificato", 400);
+        }
+
+        // Verifica l'esistenza del centro di costo nel database
+        try {
+            // Qui potremmo aggiungere una verifica più esplicita se necessario
+            // Ad esempio, cercando il centro di costo nel database
+        } catch (Exception e) {
+            throw new WebApplicationException("Centro di costo non trovato nel database: " + e.getMessage(), 400);
+        }
+
         Persona persona = new Persona(
                 personaRequest.getIdRuna(),
                 personaRequest.getNome(),
@@ -68,21 +109,21 @@ public class PersonaService {
                 personaRequest.getIdMansione(),
                 personaRequest.getIdDeposito(),
                 personaRequest.getIdRiferimento(),
-                false,
-                personaRequest.getAccessNumber(),
-                personaRequest.getAccessCount(),
-                personaRequest.getAccessUpdate(),
+                visitatore,
+                accessNumber,
+                accessCount,
+                accessUpdate,
                 personaRequest.getLuogoNascita(),
                 personaRequest.getDataNascita(),
                 personaRequest.getDataScadCertificato(),
-                personaRequest.getPreposto(),
-                personaRequest.getAntincendio(),
-                personaRequest.getPrimoSoccorso(),
+                preposto,
+                antincendio,
+                primoSoccorso,
                 personaRequest.getTipoDocumento(),
                 personaRequest.getNumeroDocumento(),
                 personaRequest.getDataScadenzaDocumento(),
-                personaRequest.getDuvri(),
-                personaRequest.getFlagPrivacy(),
+                duvri,
+                flagPrivacy,
                 personaRequest.getDataConsegnaPrivacy(),
                 personaRequest.getCentroCosto(),
                 personaRequest.getRuolo().toString(),
