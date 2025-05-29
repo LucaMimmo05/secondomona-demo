@@ -25,7 +25,8 @@ public class VisitaRepository implements PanacheRepositoryBase<RichiestaVisita, 
     }
 
     public RichiestaVisita createVisita(RichiestaVisita visita) {
-        getEntityManager().persist(visita);
+        System.out.println(visita.getRichiedente().getAntincendio());
+        persist(visita);
         return visita;
     }
 }

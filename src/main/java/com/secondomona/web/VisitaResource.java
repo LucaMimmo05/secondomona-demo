@@ -9,12 +9,12 @@ import jakarta.ws.rs.core.MediaType;
 
 import java.util.List;
 
-
-@Path("/api/visite")
+@Path("/api")
 @RolesAllowed({"refresh-token", "access-token"})
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class VisitaResource {
+
     private final VisitaService visitaService;
 
     public VisitaResource(VisitaService visitaService) {
@@ -26,12 +26,17 @@ public class VisitaResource {
         return visitaService.getAllRichiesteVisite();
     }
 
+    @Path("/visita")
     @POST
-    public RichiestaVisita create(RichiestaVisita visita) {
-        return visitaService.createRichiestaVisita(visita);
+    @RolesAllowed({"Admin", "Dipendente"})
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public RichiestaVisitaDTO createVisit(RichiestaVisitaDTO visitaDTO) {
+        RichiestaVisita savedEntity = visitaService.createRichiestaVisitaFromDTO(visitaDTO);
+        return visitaService.toDTO(savedEntity);
     }
 
-    @Path("/attive")
+    @Path("visite/attive")
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -39,7 +44,7 @@ public class VisitaResource {
         return visitaService.getVisiteAttive();
     }
 
-    @Path("/in-attesa")
+    @Path("visite/in-attesa")
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)

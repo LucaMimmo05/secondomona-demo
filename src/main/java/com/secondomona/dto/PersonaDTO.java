@@ -1,11 +1,13 @@
 package com.secondomona.dto;
 
 public class PersonaDTO {
+    private long id;
     private String nome;
     private String cognome;
     private String mail;
 
-    public PersonaDTO(String nomeVisitatore, String cognomeVisitatore, String emailVisitatore) {
+    public PersonaDTO(long id, String nomeVisitatore, String cognomeVisitatore, String emailVisitatore) {
+        this.id = id;
         this.nome = nomeVisitatore;
         this.cognome = cognomeVisitatore;
         this.mail = emailVisitatore;
@@ -13,6 +15,14 @@ public class PersonaDTO {
 
     public PersonaDTO() {
 
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getNome() {
