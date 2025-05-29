@@ -11,10 +11,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.WebApplicationException;
 
-
-import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
-import jakarta.ws.rs.WebApplicationException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +23,7 @@ public class VisitaService {
     private final PersonaRepository personaRepository;
     private final AssegnazioneBadgeService assegnazioneBadgeService;
 
-    public VisitaService(VisitaRepository visitaRepository) {
+    public VisitaService(VisitaRepository visitaRepository, PersonaRepository personaRepository, AssegnazioneBadgeService assegnazioneBadgeService) {
         this.visitaRepository = visitaRepository;
         this.personaRepository = personaRepository;
         this.assegnazioneBadgeService = assegnazioneBadgeService;
@@ -111,7 +108,7 @@ public class VisitaService {
         return visitaRepository.findVisiteAttive().stream()
                 .map(visita -> {
                     PersonaDTO visitatore = new PersonaDTO();
-                    visitatore.setIdPersona(visita.getVisitatore().getIdPersona());
+                    visitatore.setId(visita.getVisitatore().getIdPersona());
                     visitatore.setNome(visita.getVisitatore().getNome());
                     visitatore.setCognome(visita.getVisitatore().getCognome());
                     visitatore.setMail(visita.getVisitatore().getMail());
