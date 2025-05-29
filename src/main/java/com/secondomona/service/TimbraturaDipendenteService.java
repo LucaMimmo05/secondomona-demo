@@ -124,7 +124,7 @@ public class TimbraturaDipendenteService {
                 .map(timbratura -> {
                     Persona persona = timbratura.getTessera().getPersona();
                     PersonaDTO dto = new PersonaDTO();
-                    dto.setIdPersona(persona.getIdPersona());
+                    dto.setId(persona.getIdPersona());
                     dto.setNome(persona.getNome());
                     dto.setCognome(persona.getCognome());
                     dto.setMail(persona.getMail());
