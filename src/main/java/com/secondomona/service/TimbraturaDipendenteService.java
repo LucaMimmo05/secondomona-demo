@@ -1,6 +1,7 @@
 package com.secondomona.service;
 
 import com.secondomona.dto.TimbraturaDipendenteDTO;
+import com.secondomona.dto.PersonaDTO;
 import com.secondomona.persistence.PersonaRepository;
 import com.secondomona.persistence.TesseraRepository;
 import com.secondomona.persistence.TimbraturaDipendenteRepository;
@@ -111,6 +112,25 @@ public class TimbraturaDipendenteService {
 
         timbraturaDipendenteRepository.persist(timbratura);
         return mapToDTO(timbratura);
+    }
+
+    /**
+     * Ottiene la lista di tutti i dipendenti attualmente presenti in azienda
+     *
+     * @return Lista di PersonaDTO dei dipendenti presenti
+     */
+    public List<PersonaDTO> getDipendentiPresenti() {
+        return timbraturaDipendenteRepository.findDipendentiPresenti().stream()
+                .map(timbratura -> {
+                    Persona persona = timbratura.getTessera().getPersona();
+                    PersonaDTO dto = new PersonaDTO();
+                    dto.setId(persona.getIdPersona());
+                    dto.setNome(persona.getNome());
+                    dto.setCognome(persona.getCognome());
+                    dto.setMail(persona.getMail());
+                    return dto;
+                })
+                .toList();
     }
 
     public List<TimbraturaDipendenteDTO> getTimbratureByPersona(Long idPersona) {

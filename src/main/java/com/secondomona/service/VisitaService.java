@@ -9,11 +9,12 @@ import com.secondomona.persistence.model.Persona;
 import com.secondomona.persistence.model.RichiestaVisita;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.WebApplicationException;
 
+import jakarta.ws.rs.NotFoundException;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @ApplicationScoped
 public class VisitaService {
@@ -86,20 +87,34 @@ public class VisitaService {
         return visita;
     }
 
+    /**
+     * Conclude una visita impostando la data di fine al momento attuale
+     *
+     * @param idRichiesta l'ID della richiesta di visita da concludere
+     * @return La richiesta di visita aggiornata come DTO o null se non trovata
+     */
     @Transactional
-    public void endVisit(Long idVisita) {
-        RichiestaVisita visita = visitaRepository.findById(idVisita);
-        if (visita == null) {
-            throw new NotFoundException("Visita non trovata");
-        }
-        if (visita.getDataFine() != null && visita.getDataFine().isBefore(OffsetDateTime.now())) {
-            return;
-        }
-        visita.setDataFine(OffsetDateTime.now());
-        visitaRepository.persist(visita);
-        Persona visitatore = visita.getVisitatore();
-        List<AssegnazioneBadgeDTO> assegnazioni = assegnazioneBadgeService.getAssegnazioniByPersona(Long.parseLong(visitatore.getIdPersona().toString()));
-        assegnazioni.stream().filter(a -> a.getDataFine() == null).findFirst().ifPresent(a -> assegnazioneBadgeService.terminaAssegnazione(a.getIdAssegnazione()));
+    public RichiestaVisitaDTO concludiVisita(Integer idRichiesta) {
+        Optional<RichiestaVisita> visitaOptional = visitaRepository.concludiVisita(idRichiesta);
+        return visitaOptional.map(this::toDTO).orElse(null);
+    }
+
+    /**
+     * Ottiene la lista di tutti i visitatori attualmente presenti in azienda
+     *
+     * @return Lista di PersonaDTO con i dati dei visitatori presenti
+     */
+    public List<PersonaDTO> getVisitatoriattualiPresenti() {
+        return visitaRepository.findVisiteAttive().stream()
+                .map(visita -> {
+                    PersonaDTO visitatore = new PersonaDTO();
+                    visitatore.setId(visita.getVisitatore().getIdPersona());
+                    visitatore.setNome(visita.getVisitatore().getNome());
+                    visitatore.setCognome(visita.getVisitatore().getCognome());
+                    visitatore.setMail(visita.getVisitatore().getMail());
+                    return visitatore;
+                })
+                .toList();
     }
 
 }
