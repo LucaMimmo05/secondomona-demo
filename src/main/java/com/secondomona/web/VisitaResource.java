@@ -72,7 +72,7 @@ public class VisitaResource {
     @POST
     @Path("/{id}/termina")
     @RolesAllowed({"Admin", "Portineria"})
-    public void endVisit(@PathParam("id") Long id) {
-        visitaService.endVisit(id);
+    public void endVisit(@PathParam("id") Integer id) {
+        visitaService.concludiVisita(id);
     }
 }
