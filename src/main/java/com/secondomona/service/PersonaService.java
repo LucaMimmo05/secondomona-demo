@@ -1,5 +1,6 @@
 package com.secondomona.service;
 
+import com.secondomona.dto.TesseraDTO;
 import com.secondomona.persistence.PersonaRepository;
 import com.secondomona.persistence.TesseraRepository;
 import com.secondomona.persistence.model.Persona;
@@ -12,7 +13,10 @@ import io.quarkus.elytron.security.common.BcryptUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Random;
 
 @ApplicationScoped
 public class PersonaService {
@@ -85,6 +89,27 @@ public class PersonaService {
                 passwordHash
         );
         personaRepository.persist(persona);
+        String code = LocalDate.now().toString() + "-" + new Random().nextInt(1000);
+        TesseraDTO tesseraDTO = new TesseraDTO(
+                persona,
+                1,
+                "Dipendente",
+                "TESS-" + code,
+                "EXT-" + code,
+                true,
+                OffsetDateTime.now(),
+                null,
+                true,
+                false,
+                true,
+                null,
+                null,
+                null,
+                1234,
+                "ATTIVO",
+                "STANDARD"
+        );
+        tesseraRepository.persist(tesseraDTO.toTessera());
         return toPersonaResponse(persona);
     }
 
