@@ -50,4 +50,11 @@ public class VisitaResource {
         RichiestaVisita savedEntity = visitaService.createRichiestaVisitaFromDTO(visitaDTO);
         return visitaService.toDTO(savedEntity);
     }
+
+    @POST
+    @Path("/{id}/termina")
+    @RolesAllowed({"Admin", "Portineria"})
+    public void endVisit(@PathParam("id") Long id) {
+        visitaService.endVisit(id);
+    }
 }

@@ -1,5 +1,6 @@
 package com.secondomona.service;
 
+import com.secondomona.dto.AssegnazioneBadgeDTO;
 import com.secondomona.dto.PersonaDTO;
 import com.secondomona.dto.RichiestaVisitaDTO;
 import com.secondomona.persistence.PersonaRepository;
@@ -8,8 +9,10 @@ import com.secondomona.persistence.model.Persona;
 import com.secondomona.persistence.model.RichiestaVisita;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.WebApplicationException;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @ApplicationScoped
@@ -17,10 +20,12 @@ public class VisitaService {
 
     private final VisitaRepository visitaRepository;
     private final PersonaRepository personaRepository;
+    private final AssegnazioneBadgeService assegnazioneBadgeService;
 
-    public VisitaService(VisitaRepository visitaRepository, PersonaRepository personaRepository) {
+    public VisitaService(VisitaRepository visitaRepository, PersonaRepository personaRepository, AssegnazioneBadgeService assegnazioneBadgeService) {
         this.visitaRepository = visitaRepository;
         this.personaRepository = personaRepository;
+        this.assegnazioneBadgeService = assegnazioneBadgeService;
     }
 
     public List<RichiestaVisitaDTO> getAllRichiesteVisite() {
@@ -80,4 +85,21 @@ public class VisitaService {
         visitaRepository.persist(visita);
         return visita;
     }
+
+    @Transactional
+    public void endVisit(Long idVisita) {
+        RichiestaVisita visita = visitaRepository.findById(idVisita);
+        if (visita == null) {
+            throw new NotFoundException("Visita non trovata");
+        }
+        if (visita.getDataFine() != null && visita.getDataFine().isBefore(OffsetDateTime.now())) {
+            return;
+        }
+        visita.setDataFine(OffsetDateTime.now());
+        visitaRepository.persist(visita);
+        Persona visitatore = visita.getVisitatore();
+        List<AssegnazioneBadgeDTO> assegnazioni = assegnazioneBadgeService.getAssegnazioniByPersona(Long.parseLong(visitatore.getIdPersona().toString()));
+        assegnazioni.stream().filter(a -> a.getDataFine() == null).findFirst().ifPresent(a -> assegnazioneBadgeService.terminaAssegnazione(a.getIdAssegnazione()));
+    }
+
 }
