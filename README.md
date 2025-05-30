@@ -1,144 +1,231 @@
 # SecondoMona Demo
 
-Questo progetto è un'applicazione Java basata su Quarkus per la gestione di visitatori, badge e timbrature.
+## Indice
+1. [Panoramica](#panoramica)
+2. [Architettura](#architettura)
+3. [Funzionalità Principali](#funzionalità-principali)
+4. [API REST](#api-rest)
+5. [Modelli di Dati](#modelli-di-dati)
+6. [Autenticazione e Autorizzazione](#autenticazione-e-autorizzazione)
+7. [Gestione dei Badge](#gestione-dei-badge)
+8. [Gestione Visitatori](#gestione-visitatori)
+9. [Gestione Visite](#gestione-visite)
+10. [Configurazione e Avvio](#configurazione-e-avvio)
 
-## Requisiti
+## Panoramica
 
-- JDK 11 o superiore
-- Maven 3.8 o superiore
-- Microsoft SQL Server
-- Git
+SecondoMona Demo è un'applicazione per la gestione di visitatori, badge e controllo accessi. Il sistema permette di:
 
-## Configurazione del Database
+- Gestire i dipendenti e i visitatori
+- Assegnare e terminare l'uso di badge
+- Registrare e monitorare le visite
+- Gestire le timbrature
+- Generare report e documentazione
 
-L'applicazione utilizza Microsoft SQL Server come database. È necessario configurare le seguenti variabili d'ambiente prima di avviare l'applicazione:
+L'applicazione è sviluppata utilizzando Quarkus, un framework Java progettato per applicazioni cloud-native, e sfrutta tecnologie moderne come:
 
-- `DB_USERNAME`: nome utente per l'accesso al database
-- `DB_PASSWORD`: password per l'accesso al database
-- `DB_URL`: URL di connessione JDBC, ad esempio `jdbc:sqlserver://localhost:1433;databaseName=secondomona;encrypt=false`
+- RESTEasy per le API REST
+- Hibernate ORM con Panache per la persistenza
+- Qute per i template HTML
+- JWT per l'autenticazione
 
+## Architettura
 
-## Avvio dell'applicazione
+Il progetto segue un'architettura a strati:
 
-### Modalità sviluppo
-
-Per avviare l'applicazione in modalità sviluppo con hot reload:
-
-```shell
-# Impostare le variabili d'ambiente (Windows)
-set DB_USERNAME=utente_database
-set DB_PASSWORD=password_database
-set DB_URL=jdbc:sqlserver://localhost:1433;databaseName=secondomona;encrypt=false
-
-# Impostare le variabili d'ambiente (Linux/Mac)
-export DB_USERNAME=utente_database
-export DB_PASSWORD=password_database
-export DB_URL=jdbc:sqlserver://localhost:1433;databaseName=secondomona;encrypt=false
-
-# Avvio in modalità sviluppo
-./mvnw quarkus:dev
+```
+┌───────────────────┐
+│     Web Layer     │  <- Risorse REST, Controller
+├───────────────────┤
+│   Service Layer   │  <- Logica di business
+├───────────────────┤
+│ Persistence Layer │  <- Repository, Entità JPA
+└───────────────────┘
 ```
 
-L'applicazione sarà disponibile all'indirizzo: http://localhost:8080
-L'interfaccia di sviluppo Quarkus Dev UI è disponibile all'indirizzo: http://localhost:8080/q/dev/
+### Web Layer
+Contiene le risorse REST che espongono le API. Implementate nelle classi:
+- `PersonaResource`: Gestione delle persone (dipendenti e visitatori)
+- `BadgeResource`: Gestione dei badge e delle assegnazioni
+- `VisitaResource`: Gestione delle visite
+- `AuthenticationResource`: Autenticazione e gestione token
+- `SicurezzaResource`: Funzionalità legate alla sicurezza
 
-### Packaging e distribuzione
+### Service Layer
+Contiene la logica di business. Implementato nelle classi:
+- `PersonaService`: Creazione e gestione delle persone
+- `AssegnazioneBadgeService`: Assegnazione e terminazione badge
+- `VisitaService`: Creazione e gestione delle visite
+- `PdfService`: Generazione di documenti PDF
+- `SicurezzaService`: Gestione della sicurezza
+- `TimbraturaDipendenteService`: Gestione delle timbrature
 
-Per creare un pacchetto eseguibile:
+### Persistence Layer
+Gestisce l'accesso ai dati. Implementato tramite:
+- Repository Panache: `PersonaRepository`, `AssegnazioneBadgeRepository`, `TesseraRepository`, ecc.
+- Modelli JPA: `Persona`, `Tessera`, `AssegnazioneBadge`, `RichiestaVisita`, ecc.
 
-```shell
-./mvnw package
+## Funzionalità Principali
+
+### Gestione Persone
+- Registrazione di dipendenti e visitatori
+- Gestione delle informazioni personali
+- Autenticazione e controllo dei ruoli
+
+### Gestione Badge
+- Creazione automatica tessere al momento della registrazione di un visitatore
+- Assegnazione e terminazione di badge
+- Monitoraggio dello stato dei badge (attivi/terminati)
+
+### Gestione Visite
+- Registrazione di richieste di visita
+- Monitoraggio delle visite attive
+- Conclusione delle visite
+
+### Timbrature
+- Registrazione di timbrature in entrata e uscita
+- Report sulle presenze
+
+## API REST
+
+Il sistema espone diverse API REST per interagire con le sue funzionalità.
+
+### API Persone
+- `GET /api/dipendenti`: Recupera tutti i dipendenti
+- `POST /api/dipendenti`: Crea un nuovo dipendente
+- `POST /api/visitatori`: Crea un nuovo visitatore
+- `GET /api/visitatori`: Recupera tutti i visitatori
+
+### API Badge
+- `GET /api/badge`: Recupera tutte le assegnazioni di badge
+- `GET /api/badge/{id}`: Recupera un'assegnazione specifica
+- `POST /api/badge/assegna`: Assegna un badge a una persona
+- `PUT /api/badge/termina/{id}`: Termina un'assegnazione di badge
+- `GET /api/badge/persona/{idPersona}`: Recupera le assegnazioni per una persona
+
+### API Visite
+- `GET /api/visite`: Recupera tutte le richieste di visita
+- `GET /api/visite/attive`: Recupera le visite attive
+- `GET /api/visite/in-attesa`: Recupera le visite in attesa
+- `POST /api/visite`: Crea una nuova richiesta di visita
+- `PUT /api/visite/{idRichiesta}/conclusione`: Conclude una visita
+- `PUT /api/visite/{idRichiesta}/concludi-visita`: Conclude una visita e termina il badge associato
+
+## Modelli di Dati
+
+### Persona
+Rappresenta sia i dipendenti che i visitatori. Attributi principali:
+- `idPersona`: Identificatore univoco
+- `nome`, `cognome`: Anagrafica
+- `mail`: Email per contatti e autenticazione
+- `ruolo`: Ruolo della persona (Dipendente, Visitatore, Admin, Portineria)
+- `numeroDocumento`: Numero del documento di identità
+- Altre informazioni personali e di contatto
+
+### Tessera
+Rappresenta un badge fisico. Attributi principali:
+- `idTessera`: Identificatore univoco
+- `codiceTessera`: Codice univoco della tessera (formato "tess-AAAAMMGG-HHMMSS" per i visitatori)
+- `persona`: Riferimento alla persona associata
+- `categorie`: Categoria della tessera (es. "Visitatore", "Dipendente")
+- `abilitata`, `attivata`: Stato della tessera
+- `dataInizio`, `dataFine`: Periodo di validità
+
+### AssegnazioneBadge
+Rappresenta l'assegnazione di un badge a una persona. Attributi principali:
+- `idAssegnazione`: Identificatore univoco
+- `persona`: Persona a cui è assegnato il badge
+- `tessera`: Badge assegnato
+- `dataInizio`: Data e ora di inizio dell'assegnazione
+- `dataFine`: Data e ora di fine dell'assegnazione (null se ancora attiva)
+
+### RichiestaVisita
+Rappresenta una richiesta di visita. Attributi principali:
+- `idRichiesta`: Identificatore univoco
+- `visitatore`: Persona che effettua la visita
+- `dataInizio`, `dataFine`: Periodo della visita
+- `motivo`: Motivazione della visita
+- `stato`: Stato della richiesta (in attesa, approvata, conclusa)
+
+## Autenticazione e Autorizzazione
+
+Il sistema utilizza JWT (JSON Web Token) per l'autenticazione e l'autorizzazione. I ruoli principali sono:
+
+- `Admin`: Accesso completo a tutte le funzionalità
+- `Portineria`: Gestione visitatori, badge e visite
+- `Dipendente`: Accesso limitato alle proprie informazioni
+- `Visitatore`: Nessun Accesso alle API, solo visualizzazione tramite frontend
+
+Gli endpoint API sono protetti con annotazioni `@RolesAllowed` che specificano quali ruoli possono accedere a ciascuna funzionalità.
+
+## Gestione dei Badge
+
+### Creazione automatica tessere per i visitatori
+Quando viene creato un nuovo visitatore, il sistema crea automaticamente una nuova tessera con un codice nel formato "tess-AAAAMMGG-HHMMSS".
+
+Il codice responsabile di questa funzionalità si trova nel metodo `createVisitatore` del `PersonaService`:
+
+```java
+// Generiamo il codice nel formato tess-datacreazione (es. tess-20250530-123045)
+String dataOraFormattata = LocalDateTime.now()
+    .format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"));
+String codiceTessera = "tess-" + dataOraFormattata;
 ```
 
-Questo comando genera il file `quarkus-run.jar` nella directory `target/quarkus-app/`.
-Per eseguire l'applicazione pacchettizzata:
+### Assegnazione badge
+L'assegnazione di un badge avviene tramite l'API `POST /api/badge/assegna` che crea un record `AssegnazioneBadge` associando una tessera disponibile a una persona.
 
-```shell
-# Impostare le variabili d'ambiente necessarie
-java -jar target/quarkus-app/quarkus-run.jar
+### Terminazione badge
+Quando una visita termina, il badge può essere disattivato tramite l'API `PUT /api/badge/termina/{id}` o automaticamente tramite `PUT /api/visite/{idRichiesta}/concludi-visita`.
+
+## Gestione Visitatori
+
+### Creazione visitatore
+La creazione di un visitatore avviene tramite l'API `POST /api/persone/visitatori`. Al momento della creazione:
+
+1. Viene verificato che non esista già una persona con lo stesso numero di documento
+2. Viene creato un nuovo record `Persona` con ruolo "Visitatore"
+3. Viene generata automaticamente una nuova tessera associata al visitatore
+
+### Monitoraggio visitatori
+Le API permettono di monitorare:
+- Tutti i visitatori registrati
+- Visitatori attualmente presenti
+- Storico delle visite di un visitatore specifico
+
+## Gestione Visite
+
+### Creazione di una visita
+Le visite vengono create tramite l'API `POST /api/visite`. L'endpoint accetta un oggetto `RichiestaVisitaDTO` che contiene:
+- Dati del visitatore
+- Data e ora di inizio e fine previste
+- Motivo della visita
+- Informazioni aggiuntive
+
+### Conclusione di una visita
+Le visite possono essere concluse tramite:
+- `PUT /api/visite/{idRichiesta}/conclusione`: Conclude solo la visita
+- `PUT /api/visite/{idRichiesta}/concludi-visita`: Conclude la visita e termina anche l'eventuale badge associato
+
+## Configurazione e Avvio
+
+### Prerequisiti
+- JDK 11+
+- Maven 3.8+
+- Database (configurato in application.properties)
+
+### Avvio in modalità sviluppo
+```bash
+./mvnw compile quarkus:dev
 ```
 
-Per creare un file JAR autonomo (über-jar):
-
-```shell
-./mvnw package -Dquarkus.package.jar.type=uber-jar
+### Compilazione e packaging
+```bash
+./mvnw clean package
 ```
 
-Il file JAR risultante sarà eseguibile con:
-
-```shell
-java -jar target/*-runner.jar
+### Esecuzione del jar prodotto
+```bash
+java -jar target/secondomona-demo-dev.jar
 ```
 
-## Configurazione CORS
-
-L'applicazione è configurata per consentire richieste CORS da `http://localhost:5173`, che è l'URL predefinito del frontend. Se il frontend è in esecuzione su un URL diverso, modificare la proprietà `quarkus.http.cors.origins` nel file `application.properties`.
-
-## API e Documentazione
-
-Dopo aver avviato l'applicazione, è possibile accedere alla documentazione Swagger delle API all'indirizzo:
-http://localhost:8080/q/swagger-ui/
-
-### Elenco degli Endpoint
-
-#### Autenticazione
-- `POST /api/auth/login` - Effettua il login e ottiene i token di autenticazione
-- `POST /api/auth/refresh` - Rinnova il token di accesso utilizzando un refresh token
-
-#### Gestione Dipendenti e Visitatori
-- `POST /api/dipendenti` - Registra un nuovo dipendente
-- `GET /api/dipendenti` - Ottiene tutti i dipendenti
-- `GET /api/dipendenti/{id}` - Ottiene un dipendente specifico
-- `GET /api/visitatori` - Ottiene tutti i visitatori
-- `POST /api/visitatori` - Crea un nuovo visitatore
-
-#### Gestione Badge
-- `GET /api/badge` - Ottiene tutte le assegnazioni di badge
-- `GET /api/badge/{id}` - Ottiene un'assegnazione specifica
-- `POST /api/badge/assegna` - Assegna un badge a una persona
-- `PUT /api/badge/termina/{id}` - Termina un'assegnazione di badge
-- `GET /api/badge/persona/{idPersona}` - Ottiene le assegnazioni di badge di una persona
-
-#### Gestione Timbrature
-- `GET /api/timbrature` - Ottiene tutte le timbrature
-- `GET /api/timbrature/{id}` - Ottiene una timbratura specifica
-- `POST /api/timbrature` - Registra una nuova timbratura
-- `PUT /api/timbrature/{id}/valida` - Valida una timbratura (richiede il parametro `validatorId`)
-- `GET /api/timbrature/persona/{idPersona}` - Ottiene le timbrature di una persona
-- `GET /api/timbrature/data/{data}` - Ottiene le timbrature di una data specifica (formato YYYY-MM-DD)
-- `GET /api/timbrature/non-validate` - Ottiene le timbrature non ancora validate
-- `DELETE /api/timbrature/{id}` - Elimina una timbratura
-- `GET /api/timbrature/oggi/{idPersona}` - Ottiene le timbrature odierne di una persona
-
-#### Gestione Visite
-- `GET /api/visite` - Ottiene tutte le richieste di visita
-- `POST /api/visite` - Crea una nuova richiesta di visita
-- `GET /api/visite/attive` - Ottiene le visite attualmente attive
-- `GET /api/visite/in-attesa` - Ottiene le visite non ancora iniziate di quel giorno
-
-## Risoluzione dei problemi
-
-### Errori di connessione al database
-- Verificare che il server SQL Server sia in esecuzione e accessibile
-- Controllare che le credenziali nelle variabili d'ambiente siano corrette
-- Verificare che il database esista o abbia i permessi per essere creato automaticamente
-
-### Errori di avvio dell'applicazione
-- Verificare i log di avvio per identificare eventuali errori
-- Assicurarsi che tutte le dipendenze siano state scaricate correttamente
-
-## Struttura del progetto
-
-- `src/main/java/com/secondomona/dto`: Data Transfer Objects
-- `src/main/java/com/secondomona/persistence`: Repository e modelli del database
-- `src/main/java/com/secondomona/service`: Logica dei servizi
-- `src/main/java/com/secondomona/web`: Controller REST e gestione delle eccezioni
-- `src/main/resources`: File di configurazione e script SQL
-
-## Tecnologie utilizzate
-
-- Quarkus: framework Java
-- Hibernate ORM con Panache: ORM per la persistenza dei dati
-- REST con Jackson: API RESTful con serializzazione JSON
-- SmallRye JWT: autenticazione e autorizzazione con JWT
-- Microsoft SQL Server: database relazionale
