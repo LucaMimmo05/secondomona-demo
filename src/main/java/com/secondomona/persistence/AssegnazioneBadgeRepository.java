@@ -41,9 +41,16 @@ public class AssegnazioneBadgeRepository implements PanacheRepository<Assegnazio
                         "SELECT ab.tessera.idTessera FROM AssegnazioneBadge ab WHERE ab.dataFine IS NULL)",
                 "Visitatore"
         ).firstResult();
+
+        // Verifica se è stata trovata una tessera disponibile
+        if (tesseraDaAssegnare == null) {
+            throw new IllegalStateException("Non ci sono tessere disponibili da assegnare. Tutte le tessere per visitatori sono già in uso.");
+        }
+
         tesseraDaAssegnare.setPersona(persona);
         AssegnazioneBadge nuovaAssegnazione = new AssegnazioneBadge();
         nuovaAssegnazione.setTessera(tesseraDaAssegnare);
+        nuovaAssegnazione.setPersona(persona); // Assicurati che la persona sia impostata nell'assegnazione
         nuovaAssegnazione.setDataInizio(LocalDateTime.now());
         nuovaAssegnazione.setDataFine(null);
         persist(nuovaAssegnazione);

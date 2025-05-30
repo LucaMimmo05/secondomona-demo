@@ -70,9 +70,7 @@ public class VisitaResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response creaVisitaEAssegnaBadge(RichiestaVisitaDTO visitaDTO) {
         RichiestaVisita visita = visitaService.createRichiestaVisitaFromDTO(visitaDTO);
-        if (visita.getDataInizio().isBefore(OffsetDateTime.now().plusMinutes(1))) {
-            assegnazioneBadgeService.assegnazioneBadge(visita.getVisitatore());
-        }
+        // Rimossa l'assegnazione automatica del badge per evitare errori quando non ci sono tessere disponibili
         return Response.status(Response.Status.CREATED)
                 .entity(visitaService.toDTO(visita))
                 .build();
