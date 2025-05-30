@@ -42,7 +42,7 @@ public class AuthenticationResource {
         String accessToken = getAccessToken(personaResponse);
         String refreshToken = getRefreshToken(personaResponse);
 
-        // Creiamo la risposta includendo l'ID della tessera e l'ID della persona
+
         TokenResponse tokenResponse = new TokenResponse(accessToken, refreshToken, personaResponse.getIdTessera(), personaResponse.getId());
 
         return Response.ok(tokenResponse).build();

@@ -74,6 +74,48 @@ java -jar target/*-runner.jar
 
 L'applicazione è configurata per consentire richieste CORS da `http://localhost:5173`, che è l'URL predefinito del frontend. Se il frontend è in esecuzione su un URL diverso, modificare la proprietà `quarkus.http.cors.origins` nel file `application.properties`.
 
+## API e Documentazione
+
+Dopo aver avviato l'applicazione, è possibile accedere alla documentazione Swagger delle API all'indirizzo:
+http://localhost:8080/q/swagger-ui/
+
+### Elenco degli Endpoint
+
+#### Autenticazione
+- `POST /api/auth/login` - Effettua il login e ottiene i token di autenticazione
+- `POST /api/auth/refresh` - Rinnova il token di accesso utilizzando un refresh token
+
+#### Gestione Dipendenti e Visitatori
+- `POST /api/dipendenti` - Registra un nuovo dipendente
+- `GET /api/dipendenti` - Ottiene tutti i dipendenti
+- `GET /api/dipendenti/{id}` - Ottiene un dipendente specifico
+- `GET /api/visitatori` - Ottiene tutti i visitatori
+- `POST /api/visitatori` - Crea un nuovo visitatore
+
+#### Gestione Badge
+- `GET /api/badge` - Ottiene tutte le assegnazioni di badge
+- `GET /api/badge/{id}` - Ottiene un'assegnazione specifica
+- `POST /api/badge/assegna` - Assegna un badge a una persona
+- `PUT /api/badge/termina/{id}` - Termina un'assegnazione di badge
+- `GET /api/badge/persona/{idPersona}` - Ottiene le assegnazioni di badge di una persona
+
+#### Gestione Timbrature
+- `GET /api/timbrature` - Ottiene tutte le timbrature
+- `GET /api/timbrature/{id}` - Ottiene una timbratura specifica
+- `POST /api/timbrature` - Registra una nuova timbratura
+- `PUT /api/timbrature/{id}/valida` - Valida una timbratura (richiede il parametro `validatorId`)
+- `GET /api/timbrature/persona/{idPersona}` - Ottiene le timbrature di una persona
+- `GET /api/timbrature/data/{data}` - Ottiene le timbrature di una data specifica (formato YYYY-MM-DD)
+- `GET /api/timbrature/non-validate` - Ottiene le timbrature non ancora validate
+- `DELETE /api/timbrature/{id}` - Elimina una timbratura
+- `GET /api/timbrature/oggi/{idPersona}` - Ottiene le timbrature odierne di una persona
+
+#### Gestione Visite
+- `GET /api/visite` - Ottiene tutte le richieste di visita
+- `POST /api/visite` - Crea una nuova richiesta di visita
+- `GET /api/visite/attive` - Ottiene le visite attualmente attive
+- `GET /api/visite/in-attesa` - Ottiene le visite non ancora iniziate di quel giorno
+
 ## Risoluzione dei problemi
 
 ### Errori di connessione al database

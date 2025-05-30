@@ -9,8 +9,13 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Map;
 
 @Path("/api/timbrature")
 @Produces(MediaType.APPLICATION_JSON)
@@ -35,9 +40,47 @@ public class TimbraturaDipendenteResource {
 
     @POST
     @RolesAllowed({"access-token", "refresh-token"})
-    public Response registraTimbratura(TimbraturaDipendenteDTO timbratura) {
-        TimbraturaDipendenteDTO result = timbraturaDipendenteService.registraTimbratura(timbratura);
-        return Response.status(Response.Status.CREATED).entity(result).build();
+    public Response registraTimbratura(Map<String, Object> datiTimbratura) {
+        try {
+            // Estrai i dati dalla mappa
+            Long idTessera = ((Number) datiTimbratura.get("idTessera")).longValue();
+            String tipoTimbratura = (String) datiTimbratura.get("tipoTimbratura");
+            String note = (String) datiTimbratura.get("note");
+
+            // Gestione speciale per la data/ora
+            String dataOraStr = (String) datiTimbratura.get("dataOraTimbratura");
+            OffsetDateTime dataOra;
+
+            if (dataOraStr != null) {
+                try {
+                    // Prima prova a parsare con offset
+                    dataOra = OffsetDateTime.parse(dataOraStr);
+                } catch (DateTimeParseException e) {
+                    // Se fallisce, interpreta come LocalDateTime e aggiungi offset
+                    LocalDateTime localDateTime = LocalDateTime.parse(dataOraStr);
+                    dataOra = localDateTime.atOffset(ZoneOffset.systemDefault().getRules().getOffset(localDateTime));
+                }
+            } else {
+                dataOra = OffsetDateTime.now();
+            }
+
+            // Crea e popola il DTO
+            TimbraturaDipendenteDTO dto = new TimbraturaDipendenteDTO();
+            dto.setIdTessera(idTessera);
+            dto.setTipoTimbratura(tipoTimbratura);
+            dto.setDataOraTimbratura(dataOra);
+            dto.setNote(note);
+
+            // Esegui la timbratura
+            TimbraturaDipendenteDTO result = timbraturaDipendenteService.registraTimbratura(dto);
+            return Response.status(Response.Status.CREATED).entity(result).build();
+        } catch (Exception e) {
+            // Log dettagliato dell'errore
+            e.printStackTrace();
+            return Response.status(Response.Status.BAD_REQUEST)
+                .entity("Errore nella registrazione della timbratura: " + e.getMessage())
+                .build();
+        }
     }
 
     @PUT

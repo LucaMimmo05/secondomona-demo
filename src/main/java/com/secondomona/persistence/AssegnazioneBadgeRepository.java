@@ -31,29 +31,23 @@ public class AssegnazioneBadgeRepository implements PanacheRepository<Assegnazio
 
     @Transactional
     public AssegnazioneBadge assegnaBadge(Persona persona) {
-        Integer id = persona.getIdPersona();
-
-        // Cerco una tessera Visitatore senza assegnazioni attive
-        Tessera tesseraDaAssegnare = tesseraRepository.find(
-                "FROM Tessera t WHERE t.categorie = 'Visitatore' AND NOT EXISTS (" +
-                        "SELECT 1 FROM AssegnazioneBadge ab WHERE ab.tessera = t AND ab.dataFine IS NULL)"
-        ).firstResult();
-
-        tesseraDaAssegnare.setPersona(persona);
-
-        if (tesseraDaAssegnare == null) {
-            throw new IllegalStateException("Nessun badge disponibile per l'assegnazione alla persona con ID: " + id);
+        AssegnazioneBadge attiva = findActiveAssegnazione(persona);
+        if (attiva != null) {
+            throw new IllegalStateException("La persona ha già un badge attivo.");
         }
-
+        Integer id = persona.getIdPersona();
+        Tessera tesseraDaAssegnare = tesseraRepository.find(
+                "categorie = ?1 AND idTessera NOT IN (" +
+                        "SELECT ab.tessera.idTessera FROM AssegnazioneBadge ab WHERE ab.dataFine IS NULL)",
+                "Visitatore"
+        ).firstResult();
+        tesseraDaAssegnare.setPersona(persona);
         AssegnazioneBadge nuovaAssegnazione = new AssegnazioneBadge();
         nuovaAssegnazione.setTessera(tesseraDaAssegnare);
-        nuovaAssegnazione.setPersona(persona);
         nuovaAssegnazione.setDataInizio(LocalDateTime.now());
         nuovaAssegnazione.setDataFine(null);
-
         persist(nuovaAssegnazione);
         flush();
-
         return nuovaAssegnazione;
     }
 
